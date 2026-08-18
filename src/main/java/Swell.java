@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// Starts the Swell chatbot.
+// Starts the Swell chatbot
 public class Swell {
     private static final String LINE = "____________________________________________________________";
 
-    //Runs the chatbot until the user enters the bye command.
+    //Runs the chatbot until the user enters the bye command
     public static void main(String[] args) {
-        ArrayList<String> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
 
         try (Scanner scanner = new Scanner(System.in)) {
             printGreeting();
@@ -16,9 +16,14 @@ public class Swell {
             while (!input.equals("bye")) {
                 if (input.equals("list")) {
                     printTasks(tasks);
+                } else if (input.startsWith("mark ")) {
+                    updateTaskStatus(tasks, input, true);
+                } else if (input.startsWith("unmark ")) {
+                    updateTaskStatus(tasks, input, false);
                 } else {
-                    tasks.add(input);
-                    printTaskAdded(input, tasks.size());
+                    Task task = new Task(input);
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
                 }
                 input = scanner.nextLine();
             }
@@ -27,6 +32,7 @@ public class Swell {
         }
     }
 
+    // Prints the greeting message when the chatbot starts
     private static void printGreeting() {
         System.out.println(LINE);
         System.out.println(" Hey there! I'm Swell.");
@@ -34,7 +40,8 @@ public class Swell {
         System.out.println(LINE);
     }
 
-    private static void printTasks(ArrayList<String> tasks) {
+    // Prints the list of tasks or a message if the list is empty
+    private static void printTasks(ArrayList<Task> tasks) {
         System.out.println();
         if (tasks.isEmpty()) {
             System.out.println(" Your list is clear for now. Fresh start!");
@@ -47,7 +54,8 @@ public class Swell {
         System.out.println(LINE);
     }
 
-    private static void printTaskAdded(String task, int taskCount) {
+    // Prints a message confirming that a task has been added to the list
+    private static void printTaskAdded(Task task, int taskCount) {
         System.out.println();
         System.out.println(" Got it. I've added this task:");
         System.out.println("  - " + task);
@@ -55,9 +63,39 @@ public class Swell {
         System.out.println(LINE);
     }
 
+    // Updates a task's done status based on a mark or unmark command
+    private static void updateTaskStatus(ArrayList<Task> tasks, String input, boolean isDone) {
+        int taskNumber = Integer.parseInt(input.split(" ", 2)[1]);
+        Task task = tasks.get(taskNumber - 1);
+
+        if (isDone) {
+            task.markAsDone();
+            printTaskMarked(task);
+        } else {
+            task.markAsNotDone();
+            printTaskUnmarked(task);
+        }
+    }
+
+    // Prints a message confirming that a task has been marked as done
+    private static void printTaskMarked(Task task) {
+        System.out.println();
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("  - " + task);
+        System.out.println(LINE);
+    }
+
+    // Prints a message confirming that a task has been marked as not done
+    private static void printTaskUnmarked(Task task) {
+        System.out.println();
+        System.out.println(" No problem. I've marked this task as not done yet:");
+        System.out.println("  - " + task);
+        System.out.println(LINE);
+    }
+
+    // Prints the goodbye message when the user exits the chatbot
     private static void printGoodbye() {
         System.out.println();
-        System.out.println(LINE);
         System.out.println(" Bye for now! Keep shining and come back when you're ready.");
         System.out.println(LINE);
     }
