@@ -14,12 +14,13 @@ public class Swell {
 
             String input = scanner.nextLine();
             while (!input.equals("bye")) {
-                if (input.equals("list")) {
+                String command = input.trim();
+                if (command.equals("list")) {
                     printTasks(tasks);
-                } else if (input.startsWith("mark ")) {
-                    updateTaskStatus(tasks, input, true);
-                } else if (input.startsWith("unmark ")) {
-                    updateTaskStatus(tasks, input, false);
+                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                    updateTaskStatus(tasks, command, true);
+                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                    updateTaskStatus(tasks, command, false);
                 } else {
                     Task task = new Task(input);
                     tasks.add(task);
@@ -65,7 +66,25 @@ public class Swell {
 
     // Updates a task's done status based on a mark or unmark command
     private static void updateTaskStatus(ArrayList<Task> tasks, String input, boolean isDone) {
-        int taskNumber = Integer.parseInt(input.split(" ", 2)[1]);
+        String[] commandParts = input.split("\\s+", 2);
+        if (commandParts.length < 2) {
+            printInvalidTaskNumber();
+            return;
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(commandParts[1]);
+        } catch (NumberFormatException e) {
+            printInvalidTaskNumber();
+            return;
+        }
+
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            printTaskNotFound(tasks.size());
+            return;
+        }
+
         Task task = tasks.get(taskNumber - 1);
 
         if (isDone) {
@@ -75,6 +94,24 @@ public class Swell {
             task.markAsNotDone();
             printTaskUnmarked(task);
         }
+    }
+
+    // Prints a message when the task number is missing or invalid
+    private static void printInvalidTaskNumber() {
+        System.out.println();
+        System.out.println(" I need a task number for that. Try something like mark 1.");
+        System.out.println(LINE);
+    }
+
+    // Prints a message when the task number is outside the current list
+    private static void printTaskNotFound(int taskCount) {
+        System.out.println();
+        if (taskCount == 0) {
+            System.out.println(" There aren't any tasks to mark yet.");
+        } else {
+            System.out.println(" I only have tasks 1 to " + taskCount + " right now.");
+        }
+        System.out.println(LINE);
     }
 
     // Prints a message confirming that a task has been marked as done
