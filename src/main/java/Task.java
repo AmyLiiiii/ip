@@ -1,10 +1,12 @@
-// Represents one task in Swell's task list.
+// Represents one task in Swell's task list
 public class Task {
+    private final TaskType type;
     private final String description;
     private boolean isDone;
 
     // Creates a task
-    public Task(String description) {
+    public Task(TaskType type, String description) {
+        this.type = type;
         this.description = description;
         this.isDone = false;
     }
@@ -25,6 +27,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + type.getSymbol() + "][" + getStatusIcon() + "] " + description;
     }
 }
