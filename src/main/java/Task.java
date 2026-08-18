@@ -1,6 +1,4 @@
-/**
- * Represents one task in Swell's task list.
- */
+// Represents one task in Swell's task list.
 public class Task {
     private final String description;
     private boolean isDone;
@@ -21,7 +19,7 @@ public class Task {
         this.isDone = false;
     }
 
-    private String getStatusIcon() {
+    protected String getStatusIcon() {
         return isDone ? "X" : " ";
     }
 

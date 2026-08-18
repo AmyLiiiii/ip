@@ -22,9 +22,7 @@ public class Swell {
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     updateTaskStatus(tasks, command, false);
                 } else {
-                    Task task = new Task(input);
-                    tasks.add(task);
-                    printTaskAdded(task, tasks.size());
+                    addTask(tasks, command);
                 }
                 input = scanner.nextLine();
             }
@@ -38,6 +36,88 @@ public class Swell {
         System.out.println(LINE);
         System.out.println(" Hey there! I'm Swell.");
         System.out.println(" Tell me what's on your mind.");
+        System.out.println(LINE);
+    }
+
+    // Adds a todo, deadline, or event based on the user command
+    private static void addTask(ArrayList<Task> tasks, String command) {
+        Task task;
+        if (command.equals("todo") || command.startsWith("todo ")) {
+            task = createTodo(command);
+        } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+            task = createDeadline(command);
+        } else if (command.equals("event") || command.startsWith("event ")) {
+            task = createEvent(command);
+        } else {
+            task = new Todo(command);
+        }
+
+        if (task == null) {
+            return;
+        }
+
+        tasks.add(task);
+        printTaskAdded(task, tasks.size());
+    }
+
+    // Creates a todo from a todo command
+    private static Task createTodo(String command) {
+        String description = getCommandBody(command, "todo");
+        if (description.isEmpty()) {
+            printInvalidTaskDescription("todo read book");
+            return null;
+        }
+        return new Todo(description);
+    }
+
+    // Creates a deadline from a deadline command
+    private static Task createDeadline(String command) {
+        String body = getCommandBody(command, "deadline");
+        int byIndex = body.indexOf(" /by ");
+        if (byIndex == -1) {
+            printInvalidTaskDescription("deadline return book /by Sunday");
+            return null;
+        }
+
+        String description = body.substring(0, byIndex).trim();
+        String by = body.substring(byIndex + " /by ".length()).trim();
+        if (description.isEmpty() || by.isEmpty()) {
+            printInvalidTaskDescription("deadline return book /by Sunday");
+            return null;
+        }
+        return new Deadline(description, by);
+    }
+
+    // Creates an event from an event command
+    private static Task createEvent(String command) {
+        String body = getCommandBody(command, "event");
+        int fromIndex = body.indexOf(" /from ");
+        int toIndex = body.indexOf(" /to ");
+        if (fromIndex == -1 || toIndex == -1 || fromIndex > toIndex) {
+            printInvalidTaskDescription("event project meeting /from Mon 2pm /to 4pm");
+            return null;
+        }
+
+        String description = body.substring(0, fromIndex).trim();
+        String from = body.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String to = body.substring(toIndex + " /to ".length()).trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            printInvalidTaskDescription("event project meeting /from Mon 2pm /to 4pm");
+            return null;
+        }
+        return new Event(description, from, to);
+    }
+
+    // Returns the command text after the command word
+    private static String getCommandBody(String command, String commandWord) {
+        return command.substring(commandWord.length()).trim();
+    }
+
+    // Prints a message when the task command is missing required details
+    private static void printInvalidTaskDescription(String example) {
+        System.out.println();
+        System.out.println(" I need a bit more detail for that task.");
+        System.out.println(" Try: " + example);
         System.out.println(LINE);
     }
 
