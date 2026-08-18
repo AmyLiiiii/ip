@@ -61,9 +61,12 @@ public class Swell {
         case "unmark":
             updateTaskStatus(tasks, command, false);
             break;
+        case "delete":
+            deleteTask(tasks, command);
+            break;
         default:
             throw new SwellException(
-                    "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or bye.");
+                    "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
         }
     }
 
@@ -168,22 +171,8 @@ public class Swell {
 
     // Updates a task's done status based on a mark or unmark command
     private static void updateTaskStatus(ArrayList<Task> tasks, String input, boolean isDone) throws SwellException {
-        String[] commandParts = input.split("\\s+", 2);
-        if (commandParts.length < 2) {
-            throw new SwellException("I need a task number for that. Try: mark 1");
-        }
-
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(commandParts[1]);
-        } catch (NumberFormatException e) {
-            throw new SwellException("I need a task number for that. Try: mark 1");
-        }
-
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new SwellException(getTaskNotFoundMessage(tasks.size()));
-        }
-
+        String action = isDone ? "mark" : "unmark";
+        int taskNumber = getTaskNumber(tasks, input, action);
         Task task = tasks.get(taskNumber - 1);
 
         if (isDone) {
@@ -195,10 +184,38 @@ public class Swell {
         }
     }
 
+    // Deletes a task from the list
+    private static void deleteTask(ArrayList<Task> tasks, String input) throws SwellException {
+        int taskNumber = getTaskNumber(tasks, input, "delete");
+        Task task = tasks.remove(taskNumber - 1);
+        printTaskDeleted(task, tasks.size());
+    }
+
+    // Returns the task number from commands such as mark 1 or delete 1
+    private static int getTaskNumber(ArrayList<Task> tasks, String input, String action) throws SwellException {
+        String[] commandParts = input.split("\\s+", 2);
+        if (commandParts.length < 2) {
+            throw new SwellException("I need a task number for that. Try: " + action + " 1");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(commandParts[1]);
+        } catch (NumberFormatException e) {
+            throw new SwellException("I need a task number for that. Try: " + action + " 1");
+        }
+
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new SwellException(getTaskNotFoundMessage(tasks.size(), action));
+        }
+
+        return taskNumber;
+    }
+
     // Returns a message when the task number is outside the current list
-    private static String getTaskNotFoundMessage(int taskCount) {
+    private static String getTaskNotFoundMessage(int taskCount, String action) {
         if (taskCount == 0) {
-            return "There aren't any tasks to mark yet.";
+            return "There aren't any tasks to " + action + " yet.";
         }
         return "I only have tasks 1 to " + taskCount + " right now.";
     }
@@ -216,6 +233,15 @@ public class Swell {
         System.out.println();
         System.out.println(" No problem. I've marked this task as not done yet:");
         System.out.println("  - " + task);
+        System.out.println(LINE);
+    }
+
+    // Prints a message confirming that a task has been deleted
+    private static void printTaskDeleted(Task task, int taskCount) {
+        System.out.println();
+        System.out.println(" Got it. I've removed this task:");
+        System.out.println("  - " + task);
+        System.out.println(" You now have " + taskCount + " task" + (taskCount == 1 ? "" : "s") + " in the list.");
         System.out.println(LINE);
     }
 
