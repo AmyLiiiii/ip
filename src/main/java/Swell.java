@@ -12,19 +12,17 @@ public class Swell {
         try (Scanner scanner = new Scanner(System.in)) {
             printGreeting();
 
-            String input = scanner.nextLine();
-            while (!input.equals("bye")) {
-                String command = input.trim();
-                if (command.equals("list")) {
-                    printTasks(tasks);
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    updateTaskStatus(tasks, command, true);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    updateTaskStatus(tasks, command, false);
-                } else {
-                    addTask(tasks, command);
+            while (scanner.hasNextLine()) {
+                String command = scanner.nextLine().trim();
+                if (command.equals("bye")) {
+                    break;
                 }
-                input = scanner.nextLine();
+
+                try {
+                    processCommand(tasks, command);
+                } catch (SwellException e) {
+                    printError(e.getMessage());
+                }
             }
 
             printGoodbye();
@@ -39,71 +37,103 @@ public class Swell {
         System.out.println(LINE);
     }
 
-    // Adds a todo, deadline, or event based on the user command
-    private static void addTask(ArrayList<Task> tasks, String command) {
-        Task task;
-        if (command.equals("todo") || command.startsWith("todo ")) {
-            task = createTodo(command);
-        } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-            task = createDeadline(command);
-        } else if (command.equals("event") || command.startsWith("event ")) {
-            task = createEvent(command);
-        } else {
-            task = new Todo(command);
+    // Processes one user command
+    private static void processCommand(ArrayList<Task> tasks, String command) throws SwellException {
+        if (command.isEmpty()) {
+            throw new SwellException("I'm ready when you are. Try a command like todo read book.");
         }
 
-        if (task == null) {
-            return;
+        String[] commandParts = command.split("\\s+", 2);
+        String commandWord = commandParts[0];
+
+        switch (commandWord) {
+        case "list":
+            printTasks(tasks);
+            break;
+        case "todo":
+        case "deadline":
+        case "event":
+            addTask(tasks, command);
+            break;
+        case "mark":
+            updateTaskStatus(tasks, command, true);
+            break;
+        case "unmark":
+            updateTaskStatus(tasks, command, false);
+            break;
+        default:
+            throw new SwellException(
+                    "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, or bye.");
         }
+    }
+
+    // Adds a todo, deadline, or event based on the user command
+    private static void addTask(ArrayList<Task> tasks, String command) throws SwellException {
+        Task task = createTask(command);
 
         tasks.add(task);
         printTaskAdded(task, tasks.size());
     }
 
+    // Creates a todo, deadline, or event based on the user command
+    private static Task createTask(String command) throws SwellException {
+        if (command.equals("todo") || command.startsWith("todo ")) {
+            return createTodo(command);
+        } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+            return createDeadline(command);
+        } else if (command.equals("event") || command.startsWith("event ")) {
+            return createEvent(command);
+        }
+
+        throw new SwellException("I don't know that task type yet. Try todo, deadline, or event.");
+    }
+
     // Creates a todo from a todo command
-    private static Task createTodo(String command) {
+    private static Task createTodo(String command) throws SwellException {
         String description = getCommandBody(command, "todo");
         if (description.isEmpty()) {
-            printInvalidTaskDescription("todo read book");
-            return null;
+            throw new SwellException("A todo needs a description. Try: todo read book");
         }
         return new Todo(description);
     }
 
     // Creates a deadline from a deadline command
-    private static Task createDeadline(String command) {
+    private static Task createDeadline(String command) throws SwellException {
         String body = getCommandBody(command, "deadline");
-        int byIndex = body.indexOf(" /by ");
-        if (byIndex == -1) {
-            printInvalidTaskDescription("deadline return book /by Sunday");
-            return null;
+        String[] deadlineParts = body.split("\\s+/by\\s+", 2);
+        if (deadlineParts.length < 2) {
+            throw new SwellException("A deadline needs a description and /by. Try: deadline return book /by Sunday");
         }
 
-        String description = body.substring(0, byIndex).trim();
-        String by = body.substring(byIndex + " /by ".length()).trim();
+        String description = deadlineParts[0].trim();
+        String by = deadlineParts[1].trim();
         if (description.isEmpty() || by.isEmpty()) {
-            printInvalidTaskDescription("deadline return book /by Sunday");
-            return null;
+            throw new SwellException("A deadline needs a description and /by. Try: deadline return book /by Sunday");
         }
         return new Deadline(description, by);
     }
 
     // Creates an event from an event command
-    private static Task createEvent(String command) {
+    private static Task createEvent(String command) throws SwellException {
         String body = getCommandBody(command, "event");
-        int fromIndex = body.indexOf(" /from ");
-        int toIndex = body.indexOf(" /to ");
-        if (fromIndex == -1 || toIndex == -1 || fromIndex > toIndex) {
-            printInvalidTaskDescription("event project meeting /from Mon 2pm /to 4pm");
-            return null;
+        String[] eventParts = body.split("\\s+/from\\s+", 2);
+        if (eventParts.length < 2) {
+            throw new SwellException(
+                    "An event needs a description, /from, and /to. Try: event project meeting /from Mon 2pm /to 4pm");
         }
 
-        String description = body.substring(0, fromIndex).trim();
-        String from = body.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String to = body.substring(toIndex + " /to ".length()).trim();
+        String description = eventParts[0].trim();
+        String[] timeParts = eventParts[1].split("\\s+/to\\s+", 2);
+        if (timeParts.length < 2) {
+            throw new SwellException(
+                    "An event needs a description, /from, and /to. Try: event project meeting /from Mon 2pm /to 4pm");
+        }
+
+        String from = timeParts[0].trim();
+        String to = timeParts[1].trim();
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            printInvalidTaskDescription("event project meeting /from Mon 2pm /to 4pm");
-            return null;
+            throw new SwellException(
+                    "An event needs a description, /from, and /to. Try: event project meeting /from Mon 2pm /to 4pm");
         }
         return new Event(description, from, to);
     }
@@ -111,14 +141,6 @@ public class Swell {
     // Returns the command text after the command word
     private static String getCommandBody(String command, String commandWord) {
         return command.substring(commandWord.length()).trim();
-    }
-
-    // Prints a message when the task command is missing required details
-    private static void printInvalidTaskDescription(String example) {
-        System.out.println();
-        System.out.println(" I need a bit more detail for that task.");
-        System.out.println(" Try: " + example);
-        System.out.println(LINE);
     }
 
     // Prints the list of tasks or a message if the list is empty
@@ -145,24 +167,21 @@ public class Swell {
     }
 
     // Updates a task's done status based on a mark or unmark command
-    private static void updateTaskStatus(ArrayList<Task> tasks, String input, boolean isDone) {
+    private static void updateTaskStatus(ArrayList<Task> tasks, String input, boolean isDone) throws SwellException {
         String[] commandParts = input.split("\\s+", 2);
         if (commandParts.length < 2) {
-            printInvalidTaskNumber();
-            return;
+            throw new SwellException("I need a task number for that. Try: mark 1");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(commandParts[1]);
         } catch (NumberFormatException e) {
-            printInvalidTaskNumber();
-            return;
+            throw new SwellException("I need a task number for that. Try: mark 1");
         }
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            printTaskNotFound(tasks.size());
-            return;
+            throw new SwellException(getTaskNotFoundMessage(tasks.size()));
         }
 
         Task task = tasks.get(taskNumber - 1);
@@ -176,22 +195,12 @@ public class Swell {
         }
     }
 
-    // Prints a message when the task number is missing or invalid
-    private static void printInvalidTaskNumber() {
-        System.out.println();
-        System.out.println(" I need a task number for that. Try something like mark 1.");
-        System.out.println(LINE);
-    }
-
-    // Prints a message when the task number is outside the current list
-    private static void printTaskNotFound(int taskCount) {
-        System.out.println();
+    // Returns a message when the task number is outside the current list
+    private static String getTaskNotFoundMessage(int taskCount) {
         if (taskCount == 0) {
-            System.out.println(" There aren't any tasks to mark yet.");
-        } else {
-            System.out.println(" I only have tasks 1 to " + taskCount + " right now.");
+            return "There aren't any tasks to mark yet.";
         }
-        System.out.println(LINE);
+        return "I only have tasks 1 to " + taskCount + " right now.";
     }
 
     // Prints a message confirming that a task has been marked as done
@@ -207,6 +216,13 @@ public class Swell {
         System.out.println();
         System.out.println(" No problem. I've marked this task as not done yet:");
         System.out.println("  - " + task);
+        System.out.println(LINE);
+    }
+
+    // Prints an error message without stopping the chatbot
+    private static void printError(String message) {
+        System.out.println();
+        System.out.println(" Oops! " + message);
         System.out.println(LINE);
     }
 
