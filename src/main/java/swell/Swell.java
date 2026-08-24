@@ -9,9 +9,15 @@ import swell.ui.Ui;
 
 import java.util.Scanner;
 
-// Starts the Swell chatbot
+/**
+ * Starts the Swell chatbot.
+ */
 public class Swell {
-    //Runs the chatbot until the user enters the bye command
+    /**
+     * Runs the chatbot until the user enters the bye command.
+     *
+     * @param args command line arguments supplied to the program
+     */
     public static void main(String[] args) {
         Ui ui = new Ui();
         Storage storage = new Storage();

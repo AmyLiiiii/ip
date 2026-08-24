@@ -9,14 +9,27 @@ import swell.task.Todo;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-// Parses user commands into task objects and command arguments
+/**
+ * Parses user commands into task objects and command arguments.
+ */
 public class Parser {
-    // Returns the first word of the command
+    /**
+     * Returns the first word of the given command.
+     *
+     * @param command user command entered into Swell
+     * @return the command word
+     */
     public static String getCommandWord(String command) {
         return command.split("\\s+", 2)[0];
     }
 
-    // Returns the task described by a todo, deadline, or event command
+    /**
+     * Returns the task described by a todo, deadline, or event command.
+     *
+     * @param command user command that describes a task
+     * @return task created from the command
+     * @throws SwellException if the command is not a valid task command
+     */
     public static Task getTask(String command) throws SwellException {
         String commandWord = getCommandWord(command);
         switch (commandWord) {
@@ -31,7 +44,14 @@ public class Parser {
             }
     }
 
-    // Returns the task number from commands such as mark 1 or delete 1
+    /**
+     * Returns the task number from commands such as mark 1 or delete 1.
+     *
+     * @param command user command containing a task number
+     * @param action command action to include in error messages
+     * @return one-based task number
+     * @throws SwellException if the task number is missing or invalid
+     */
     public static int getTaskNumber(String command, String action) throws SwellException {
         String[] commandParts = command.split("\\s+", 2);
         if (commandParts.length < 2) {
