@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -119,15 +121,22 @@ public class Swell {
         String body = getCommandBody(command, "deadline");
         String[] deadlineParts = body.split("\\s+/by\\s+", 2);
         if (deadlineParts.length < 2) {
-            throw new SwellException("A deadline needs a description and /by. Try: deadline return book /by Sunday");
+            throw new SwellException(
+                    "A deadline needs a description and /by. Try: deadline return book /by 2019-10-15");
         }
 
         String description = deadlineParts[0].trim();
         String by = deadlineParts[1].trim();
         if (description.isEmpty() || by.isEmpty()) {
-            throw new SwellException("A deadline needs a description and /by. Try: deadline return book /by Sunday");
+            throw new SwellException(
+                    "A deadline needs a description and /by. Try: deadline return book /by 2019-10-15");
         }
-        return new Deadline(description, by);
+
+        try {
+            return new Deadline(description, LocalDate.parse(by));
+        } catch (DateTimeParseException e) {
+            throw new SwellException("Please use yyyy-mm-dd for deadlines. Try: deadline return book /by 2019-10-15");
+        }
     }
 
     // Creates an event from an event command

@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 // Handles loading and saving Swell tasks
@@ -65,7 +67,7 @@ public class Storage {
         fields.add(encode(task.getDescription()));
 
         if (task instanceof Deadline) {
-            fields.add(encode(((Deadline) task).getBy()));
+            fields.add(encode(((Deadline) task).getBy().toString()));
         } else if (task instanceof Event) {
             fields.add(encode(((Event) task).getFrom()));
             fields.add(encode(((Event) task).getTo()));
@@ -101,7 +103,7 @@ public class Storage {
             if (fields.length != 4) {
                 throw new SwellException("A saved deadline task has the wrong format.");
             }
-            return new Deadline(description, decode(fields[3]));
+            return new Deadline(description, parseSavedDate(fields[3]));
         case "E":
             if (fields.length != 5) {
                 throw new SwellException("A saved event task has the wrong format.");
@@ -109,6 +111,14 @@ public class Storage {
             return new Event(description, decode(fields[3]), decode(fields[4]));
         default:
             throw new SwellException("A saved task has an unknown task type.");
+        }
+    }
+
+    private LocalDate parseSavedDate(String encodedDate) throws SwellException {
+        try {
+            return LocalDate.parse(decode(encodedDate));
+        } catch (DateTimeParseException e) {
+            throw new SwellException("A saved deadline task has an invalid date.");
         }
     }
 
