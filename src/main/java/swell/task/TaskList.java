@@ -43,6 +43,24 @@ public class TaskList {
         return tasks.remove(taskNumber - 1);
     }
 
+    /**
+     * Returns tasks whose descriptions contain the given keyword.
+     *
+     * @param keyword keyword to search for.
+     * @return task list containing matching tasks.
+     */
+    public TaskList findTasks(String keyword) {
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+        String keywordLowerCase = keyword.toLowerCase();
+
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(keywordLowerCase)) {
+                matchingTasks.add(task);
+            }
+        }
+        return new TaskList(matchingTasks);
+    }
+
     // Returns the number of tasks in the list
     public int size() {
         return tasks.size();

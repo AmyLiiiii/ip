@@ -45,6 +45,21 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns the keyword used by a find command.
+     *
+     * @param command user command to parse.
+     * @return keyword to search for.
+     * @throws SwellException if the find command has no keyword.
+     */
+    public static String getFindKeyword(String command) throws SwellException {
+        String keyword = getCommandBody(command, "find");
+        if (keyword.isEmpty()) {
+            throw new SwellException("A find command needs a keyword. Try: find book");
+        }
+        return keyword;
+    }
+
     private static Task createTodo(String command) throws SwellException {
         String description = getCommandBody(command, "todo");
         if (description.isEmpty()) {
