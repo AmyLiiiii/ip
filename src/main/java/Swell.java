@@ -7,7 +7,8 @@ public class Swell {
 
     //Runs the chatbot until the user enters the bye command
     public static void main(String[] args) {
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage();
+        ArrayList<Task> tasks = loadTasks(storage);
 
         try (Scanner scanner = new Scanner(System.in)) {
             printGreeting();
@@ -19,13 +20,26 @@ public class Swell {
                 }
 
                 try {
-                    processCommand(tasks, command);
+                    boolean shouldSave = processCommand(tasks, command);
+                    if (shouldSave) {
+                        storage.saveTasks(tasks);
+                    }
                 } catch (SwellException e) {
                     printError(e.getMessage());
                 }
             }
 
             printGoodbye();
+        }
+    }
+
+    // Loads tasks from the data file without stopping Swell if the file cannot be read
+    private static ArrayList<Task> loadTasks(Storage storage) {
+        try {
+            return storage.loadTasks();
+        } catch (SwellException e) {
+            printError(e.getMessage());
+            return new ArrayList<>();
         }
     }
 
@@ -38,7 +52,7 @@ public class Swell {
     }
 
     // Processes one user command
-    private static void processCommand(ArrayList<Task> tasks, String command) throws SwellException {
+    private static boolean processCommand(ArrayList<Task> tasks, String command) throws SwellException {
         if (command.isEmpty()) {
             throw new SwellException("I'm ready when you are. Try a command like todo read book.");
         }
@@ -49,21 +63,21 @@ public class Swell {
         switch (commandWord) {
         case "list":
             printTasks(tasks);
-            break;
+            return false;
         case "todo":
         case "deadline":
         case "event":
             addTask(tasks, command);
-            break;
+            return true;
         case "mark":
             updateTaskStatus(tasks, command, true);
-            break;
+            return true;
         case "unmark":
             updateTaskStatus(tasks, command, false);
-            break;
+            return true;
         case "delete":
             deleteTask(tasks, command);
-            break;
+            return true;
         default:
             throw new SwellException(
                     "I don't know that command yet. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
