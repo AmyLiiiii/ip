@@ -8,15 +8,16 @@ import java.util.Locale;
  * Represents a task that should be completed by a deadline.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter DISPLAY_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM d yyyy", Locale.ENGLISH);
 
     private final LocalDate by;
 
     /**
      * Creates a deadline task with the given description and deadline date.
      *
-     * @param description task description
-     * @param by deadline date
+     * @param description task description.
+     * @param by deadline date.
      */
     public Deadline(String description, LocalDate by) {
         super(TaskType.DEADLINE, description);
@@ -26,16 +27,14 @@ public class Deadline extends Task {
     /**
      * Returns the deadline date.
      *
-     * @return deadline date
+     * @return deadline date.
      */
     public LocalDate getBy() {
         return by;
     }
 
     /**
-     * Returns the display form of this deadline.
-     *
-     * @return display form of this deadline
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

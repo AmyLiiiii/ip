@@ -10,9 +10,9 @@ public class Event extends Task {
     /**
      * Creates an event task with the given description, start, and end text.
      *
-     * @param description task description
-     * @param from event start text
-     * @param to event end text
+     * @param description task description.
+     * @param from event start text.
+     * @param to event end text.
      */
     public Event(String description, String from, String to) {
         super(TaskType.EVENT, description);
@@ -23,7 +23,7 @@ public class Event extends Task {
     /**
      * Returns the event start text.
      *
-     * @return event start text
+     * @return event start text.
      */
     public String getFrom() {
         return from;
@@ -32,16 +32,14 @@ public class Event extends Task {
     /**
      * Returns the event end text.
      *
-     * @return event end text
+     * @return event end text.
      */
     public String getTo() {
         return to;
     }
 
     /**
-     * Returns the display form of this event.
-     *
-     * @return display form of this event
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

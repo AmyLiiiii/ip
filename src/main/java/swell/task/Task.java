@@ -11,8 +11,8 @@ public class Task {
     /**
      * Creates a task with the given type and description.
      *
-     * @param type task type
-     * @param description task description
+     * @param type task type.
+     * @param description task description.
      */
     public Task(TaskType type, String description) {
         this.type = type;
@@ -37,7 +37,7 @@ public class Task {
     /**
      * Returns this task's type.
      *
-     * @return task type
+     * @return task type.
      */
     public TaskType getType() {
         return type;
@@ -46,7 +46,7 @@ public class Task {
     /**
      * Returns this task's description.
      *
-     * @return task description
+     * @return task description.
      */
     public String getDescription() {
         return description;
@@ -55,12 +55,17 @@ public class Task {
     /**
      * Returns whether this task is marked as done.
      *
-     * @return true if this task is done
+     * @return true if this task is done.
      */
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Returns the status icon used in task display text.
+     *
+     * @return status icon.
+     */
     protected String getStatusIcon() {
         return isDone ? "X" : " ";
     }
@@ -68,7 +73,7 @@ public class Task {
     /**
      * Returns the display form of this task.
      *
-     * @return display form of this task
+     * @return display form of this task.
      */
     @Override
     public String toString() {

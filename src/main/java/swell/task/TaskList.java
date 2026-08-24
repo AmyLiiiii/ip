@@ -1,8 +1,8 @@
 package swell.task;
 
-import swell.exception.SwellException;
-
 import java.util.ArrayList;
+
+import swell.exception.SwellException;
 
 /**
  * Manages the tasks in Swell.
@@ -20,7 +20,7 @@ public class TaskList {
     /**
      * Creates a task list with existing tasks.
      *
-     * @param tasks existing tasks to use as the backing list
+     * @param tasks existing tasks to manage.
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -29,7 +29,7 @@ public class TaskList {
     /**
      * Adds a task to the list.
      *
-     * @param task task to add
+     * @param task task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -38,9 +38,9 @@ public class TaskList {
     /**
      * Marks a task as done and returns it.
      *
-     * @param taskNumber one-based task number
-     * @return marked task
-     * @throws SwellException if the task number is outside the current list
+     * @param taskNumber one-based task number.
+     * @return task that was marked as done.
+     * @throws SwellException if the task number is outside the current list.
      */
     public Task markTask(int taskNumber) throws SwellException {
         Task task = getTask(taskNumber, "mark");
@@ -51,9 +51,9 @@ public class TaskList {
     /**
      * Marks a task as not done and returns it.
      *
-     * @param taskNumber one-based task number
-     * @return unmarked task
-     * @throws SwellException if the task number is outside the current list
+     * @param taskNumber one-based task number.
+     * @return task that was marked as not done.
+     * @throws SwellException if the task number is outside the current list.
      */
     public Task unmarkTask(int taskNumber) throws SwellException {
         Task task = getTask(taskNumber, "unmark");
@@ -64,9 +64,9 @@ public class TaskList {
     /**
      * Deletes a task and returns it.
      *
-     * @param taskNumber one-based task number
-     * @return deleted task
-     * @throws SwellException if the task number is outside the current list
+     * @param taskNumber one-based task number.
+     * @return task that was deleted.
+     * @throws SwellException if the task number is outside the current list.
      */
     public Task deleteTask(int taskNumber) throws SwellException {
         getTask(taskNumber, "delete");
@@ -76,7 +76,7 @@ public class TaskList {
     /**
      * Returns the number of tasks in the list.
      *
-     * @return number of tasks
+     * @return number of tasks.
      */
     public int size() {
         return tasks.size();
@@ -85,7 +85,7 @@ public class TaskList {
     /**
      * Returns whether the task list is empty.
      *
-     * @return true if the task list has no tasks
+     * @return true if the list is empty.
      */
     public boolean isEmpty() {
         return tasks.isEmpty();
@@ -94,8 +94,8 @@ public class TaskList {
     /**
      * Returns the task at the given zero-based index.
      *
-     * @param index zero-based task index
-     * @return task at the given index
+     * @param index zero-based task index.
+     * @return task at the given index.
      */
     public Task get(int index) {
         return tasks.get(index);
@@ -104,7 +104,7 @@ public class TaskList {
     /**
      * Returns the backing task list for storage.
      *
-     * @return backing task list
+     * @return backing task list.
      */
     public ArrayList<Task> asList() {
         return tasks;

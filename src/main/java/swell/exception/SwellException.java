@@ -7,7 +7,7 @@ public class SwellException extends Exception {
     /**
      * Creates a Swell exception with the given message.
      *
-     * @param message error message to show to the user
+     * @param message error message.
      */
     public SwellException(String message) {
         super(message);

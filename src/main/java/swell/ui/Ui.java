@@ -10,6 +10,12 @@ public class Ui {
     private static final String LINE = "____________________________________________________________";
 
     /**
+     * Creates a user interface component for printing chatbot messages.
+     */
+    public Ui() {
+    }
+
+    /**
      * Prints the greeting message when the chatbot starts.
      */
     public void printGreeting() {
@@ -22,7 +28,7 @@ public class Ui {
     /**
      * Prints the list of tasks or a message if the list is empty.
      *
-     * @param tasks task list to print
+     * @param tasks task list to print.
      */
     public void printTasks(TaskList tasks) {
         System.out.println();
@@ -40,21 +46,22 @@ public class Ui {
     /**
      * Prints a message confirming that a task has been added to the list.
      *
-     * @param task task that was added
-     * @param taskCount number of tasks after adding the task
+     * @param task task that was added.
+     * @param taskCount number of tasks after adding the task.
      */
     public void printTaskAdded(Task task, int taskCount) {
         System.out.println();
         System.out.println(" Got it. I've added this task:");
         System.out.println("  - " + task);
-        System.out.println(" You now have " + taskCount + " task" + (taskCount == 1 ? "" : "s") + " in the list.");
+        System.out.println(" You now have " + taskCount + " task"
+                + (taskCount == 1 ? "" : "s") + " in the list.");
         System.out.println(LINE);
     }
 
     /**
      * Prints a message confirming that a task has been marked as done.
      *
-     * @param task task that was marked as done
+     * @param task task that was marked as done.
      */
     public void printTaskMarked(Task task) {
         System.out.println();
@@ -66,7 +73,7 @@ public class Ui {
     /**
      * Prints a message confirming that a task has been marked as not done.
      *
-     * @param task task that was marked as not done
+     * @param task task that was marked as not done.
      */
     public void printTaskUnmarked(Task task) {
         System.out.println();
@@ -78,21 +85,22 @@ public class Ui {
     /**
      * Prints a message confirming that a task has been deleted.
      *
-     * @param task task that was deleted
-     * @param taskCount number of tasks after deleting the task
+     * @param task task that was deleted.
+     * @param taskCount number of tasks after deleting the task.
      */
     public void printTaskDeleted(Task task, int taskCount) {
         System.out.println();
         System.out.println(" Got it. I've removed this task:");
         System.out.println("  - " + task);
-        System.out.println(" You now have " + taskCount + " task" + (taskCount == 1 ? "" : "s") + " in the list.");
+        System.out.println(" You now have " + taskCount + " task"
+                + (taskCount == 1 ? "" : "s") + " in the list.");
         System.out.println(LINE);
     }
 
     /**
      * Prints an error message without stopping the chatbot.
      *
-     * @param message error message to print
+     * @param message error message to print.
      */
     public void printError(String message) {
         System.out.println();
