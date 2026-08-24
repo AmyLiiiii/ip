@@ -14,7 +14,7 @@ public class Storage {
     private static final String SEPARATOR = " | ";
 
     // Loads tasks from the data file, creating the file first if needed
-    public ArrayList<Task> loadTasks() throws SwellException {
+    public TaskList loadTasks() throws SwellException {
         ensureDataFileExists();
 
         ArrayList<Task> tasks = new ArrayList<>();
@@ -27,15 +27,15 @@ public class Storage {
         } catch (IOException e) {
             throw new SwellException("I couldn't read the saved tasks, so I'm starting fresh.");
         }
-        return tasks;
+        return new TaskList(tasks);
     }
 
     // Saves all tasks to the data file
-    public void saveTasks(ArrayList<Task> tasks) throws SwellException {
+    public void saveTasks(TaskList tasks) throws SwellException {
         ensureDataFileExists();
 
         ArrayList<String> lines = new ArrayList<>();
-        for (Task task : tasks) {
+        for (Task task : tasks.asList()) {
             lines.add(formatTask(task));
         }
 
@@ -94,24 +94,24 @@ public class Storage {
     private Task createTaskFromFields(String[] fields) throws SwellException {
         String description = decode(fields[2]);
         switch (fields[0]) {
-        case "T":
-            if (fields.length != 3) {
-                throw new SwellException("A saved todo task has the wrong format.");
+            case "T":
+                if (fields.length != 3) {
+                    throw new SwellException("A saved todo task has the wrong format.");
+                }
+                return new Todo(description);
+            case "D":
+                if (fields.length != 4) {
+                    throw new SwellException("A saved deadline task has the wrong format.");
+                }
+                return new Deadline(description, parseSavedDate(fields[3]));
+            case "E":
+                if (fields.length != 5) {
+                    throw new SwellException("A saved event task has the wrong format.");
+                }
+                return new Event(description, decode(fields[3]), decode(fields[4]));
+            default:
+                throw new SwellException("A saved task has an unknown task type.");
             }
-            return new Todo(description);
-        case "D":
-            if (fields.length != 4) {
-                throw new SwellException("A saved deadline task has the wrong format.");
-            }
-            return new Deadline(description, parseSavedDate(fields[3]));
-        case "E":
-            if (fields.length != 5) {
-                throw new SwellException("A saved event task has the wrong format.");
-            }
-            return new Event(description, decode(fields[3]), decode(fields[4]));
-        default:
-            throw new SwellException("A saved task has an unknown task type.");
-        }
     }
 
     private LocalDate parseSavedDate(String encodedDate) throws SwellException {
