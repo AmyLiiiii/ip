@@ -44,6 +44,24 @@ public class Ui {
     }
 
     /**
+     * Prints the list of tasks matching a find command.
+     *
+     * @param tasks matching tasks to print.
+     */
+    public void printMatchingTasks(TaskList tasks) {
+        System.out.println();
+        if (tasks.isEmpty()) {
+            System.out.println(" I couldn't find any matching tasks.");
+        } else {
+            System.out.println(" Here are the matching tasks in your list:");
+            for (int i = 0; i < tasks.size(); i += 1) {
+                System.out.println(" " + (i + 1) + ". " + tasks.get(i));
+            }
+        }
+        System.out.println(LINE);
+    }
+
+    /**
      * Prints a message confirming that a task has been added to the list.
      *
      * @param task task that was added.

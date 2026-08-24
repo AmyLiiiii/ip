@@ -88,6 +88,9 @@ public class Swell {
             case "list":
                 ui.printTasks(tasks);
                 return false;
+            case "find":
+                ui.printMatchingTasks(tasks.findTasks(Parser.getFindKeyword(command)));
+                return false;
             case "todo":
             case "deadline":
             case "event":
@@ -104,8 +107,8 @@ public class Swell {
                 return true;
             default:
                 throw new SwellException(
-                        "I don't know that command yet. Try todo, deadline, event, list, mark, "
-                                + "unmark, delete, or bye.");
+                        "I don't know that command yet. Try todo, deadline, event, list, find, "
+                                + "mark, unmark, delete, or bye.");
             }
     }
 
