@@ -1,3 +1,8 @@
+package swell.ui;
+
+import swell.task.Task;
+import swell.task.TaskList;
+
 // Handles user-facing text output
 public class Ui {
     private static final String LINE = "____________________________________________________________";

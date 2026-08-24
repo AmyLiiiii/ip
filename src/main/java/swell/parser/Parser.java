@@ -1,3 +1,11 @@
+package swell.parser;
+
+import swell.exception.SwellException;
+import swell.task.Deadline;
+import swell.task.Event;
+import swell.task.Task;
+import swell.task.Todo;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 

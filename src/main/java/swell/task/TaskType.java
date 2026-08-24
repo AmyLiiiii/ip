@@ -1,3 +1,5 @@
+package swell.task;
+
 // Represents the supported task types in Swell
 public enum TaskType {
     TODO("T"),

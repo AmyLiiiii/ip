@@ -1,3 +1,7 @@
+package swell.task;
+
+import swell.exception.SwellException;
+
 import java.util.ArrayList;
 
 // Manages the tasks in Swell
