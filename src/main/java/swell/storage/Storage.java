@@ -17,12 +17,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
-// Handles loading and saving Swell tasks
+/**
+ * Handles loading and saving Swell tasks.
+ */
 public class Storage {
     private static final Path DATA_FILE = Path.of("data", "swell.txt");
     private static final String SEPARATOR = " | ";
 
-    // Loads tasks from the data file, creating the file first if needed
+    /**
+     * Loads tasks from the data file, creating the file first if needed.
+     *
+     * @return task list loaded from the data file
+     * @throws SwellException if the data file cannot be prepared or read
+     */
     public TaskList loadTasks() throws SwellException {
         ensureDataFileExists();
 
@@ -39,7 +46,12 @@ public class Storage {
         return new TaskList(tasks);
     }
 
-    // Saves all tasks to the data file
+    /**
+     * Saves all tasks to the data file.
+     *
+     * @param tasks task list to save
+     * @throws SwellException if the data file cannot be prepared or written
+     */
     public void saveTasks(TaskList tasks) throws SwellException {
         ensureDataFileExists();
 

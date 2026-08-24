@@ -1,6 +1,8 @@
 package swell.task;
 
-// Represents the supported task types in Swell
+/**
+ * Represents the supported task types in Swell.
+ */
 public enum TaskType {
     TODO("T"),
     DEADLINE("D"),
@@ -8,12 +10,20 @@ public enum TaskType {
 
     private final String symbol;
 
-    // Creates a task type with the display symbol used in task lists
+    /**
+     * Creates a task type with the display symbol used in task lists.
+     *
+     * @param symbol display symbol for this task type
+     */
     TaskType(String symbol) {
         this.symbol = symbol;
     }
 
-    // Returns the display symbol for this task type
+    /**
+     * Returns the display symbol for this task type.
+     *
+     * @return display symbol for this task type
+     */
     public String getSymbol() {
         return symbol;
     }
