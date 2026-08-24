@@ -1,3 +1,5 @@
+package swell.task;
+
 // Represents a task that happens over a period of time
 public class Event extends Task {
     private final String from;

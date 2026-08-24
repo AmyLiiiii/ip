@@ -1,3 +1,12 @@
+package swell;
+
+import swell.exception.SwellException;
+import swell.parser.Parser;
+import swell.storage.Storage;
+import swell.task.Task;
+import swell.task.TaskList;
+import swell.ui.Ui;
+
 import java.util.Scanner;
 
 // Starts the Swell chatbot

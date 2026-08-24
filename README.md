@@ -13,13 +13,11 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
     1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/Swell.java` file, right-click it, and choose `Run Swell.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
+1. After that, locate the `src/main/java/swell/Swell.java` file, right-click it, and choose `Run Swell.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
     ```
     ____________________________________________________________
-     Hello! I'm Swell
-     What can I do for you?
-    ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Hey there! I'm Swell.
+     Tell me what's on your mind.
     ____________________________________________________________
     ```
 
@@ -29,10 +27,10 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 
 Swell is organized into small classes with clear responsibilities:
 
-- `Swell` runs the main chatbot loop and coordinates the other classes.
-- `Parser` interprets user commands and creates the correct task objects.
-- `TaskList` manages the task collection, including adding, marking, unmarking, and deleting tasks.
-- `Ui` handles all user-facing messages.
-- `Storage` loads tasks from `data/swell.txt` and saves changes automatically.
-- `Task`, `Todo`, `Deadline`, `Event`, and `TaskType` represent the different task types and their display formats.
-- `SwellException` represents user input errors that the chatbot can recover from.
+- `swell.Swell` runs the main chatbot loop and coordinates the other classes.
+- `swell.parser.Parser` interprets user commands and creates the correct task objects.
+- `swell.task.TaskList` manages the task collection, including adding, marking, unmarking, and deleting tasks.
+- `swell.ui.Ui` handles all user-facing messages.
+- `swell.storage.Storage` loads tasks from `data/swell.txt` and saves changes automatically.
+- `swell.task.Task`, `Todo`, `Deadline`, `Event`, and `TaskType` represent the different task types and their display formats.
+- `swell.exception.SwellException` represents user input errors that the chatbot can recover from.

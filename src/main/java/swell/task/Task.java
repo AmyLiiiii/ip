@@ -1,3 +1,5 @@
+package swell.task;
+
 // Represents one task in Swell's task list
 public class Task {
     private final TaskType type;
