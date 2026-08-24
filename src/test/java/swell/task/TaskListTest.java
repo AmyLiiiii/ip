@@ -1,11 +1,12 @@
 package swell.task;
 
-import org.junit.jupiter.api.Test;
-import swell.exception.SwellException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
+import swell.exception.SwellException;
 
 public class TaskListTest {
     @Test

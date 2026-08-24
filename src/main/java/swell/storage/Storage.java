@@ -1,12 +1,5 @@
 package swell.storage;
 
-import swell.exception.SwellException;
-import swell.task.Deadline;
-import swell.task.Event;
-import swell.task.Task;
-import swell.task.TaskList;
-import swell.task.Todo;
-
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -17,12 +10,32 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
-// Handles loading and saving Swell tasks
+import swell.exception.SwellException;
+import swell.task.Deadline;
+import swell.task.Event;
+import swell.task.Task;
+import swell.task.TaskList;
+import swell.task.Todo;
+
+/**
+ * Handles loading and saving Swell tasks.
+ */
 public class Storage {
     private static final Path DATA_FILE = Path.of("data", "swell.txt");
     private static final String SEPARATOR = " | ";
 
-    // Loads tasks from the data file, creating the file first if needed
+    /**
+     * Creates a storage component that reads and writes Swell's data file.
+     */
+    public Storage() {
+    }
+
+    /**
+     * Loads tasks from the data file, creating the file first if needed.
+     *
+     * @return loaded task list.
+     * @throws SwellException if the data file cannot be prepared or read.
+     */
     public TaskList loadTasks() throws SwellException {
         ensureDataFileExists();
 
@@ -39,7 +52,12 @@ public class Storage {
         return new TaskList(tasks);
     }
 
-    // Saves all tasks to the data file
+    /**
+     * Saves all tasks to the data file.
+     *
+     * @param tasks task list to save.
+     * @throws SwellException if the data file cannot be prepared or written.
+     */
     public void saveTasks(TaskList tasks) throws SwellException {
         ensureDataFileExists();
 
