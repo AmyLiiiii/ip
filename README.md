@@ -45,6 +45,18 @@ Build the project:
 ./gradlew build
 ```
 
+Create the runnable JAR file:
+
+```bash
+./gradlew shadowJar
+```
+
+Run the JAR file:
+
+```bash
+java -jar build/libs/swell.jar
+```
+
 ## Project Architecture
 
 Swell is organized into small classes with clear responsibilities:
