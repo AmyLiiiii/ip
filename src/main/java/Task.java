@@ -21,6 +21,21 @@ public class Task {
         this.isDone = false;
     }
 
+    // Returns this task's type
+    public TaskType getType() {
+        return type;
+    }
+
+    // Returns this task's description
+    public String getDescription() {
+        return description;
+    }
+
+    // Returns whether this task is marked as done
+    public boolean isDone() {
+        return isDone;
+    }
+
     protected String getStatusIcon() {
         return isDone ? "X" : " ";
     }
