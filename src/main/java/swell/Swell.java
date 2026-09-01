@@ -109,7 +109,7 @@ public class Swell {
                 throw new SwellException(
                         "I don't know that command yet. Try todo, deadline, event, list, find, "
                                 + "mark, unmark, delete, or bye.");
-            }
+        }
     }
 
     /**
