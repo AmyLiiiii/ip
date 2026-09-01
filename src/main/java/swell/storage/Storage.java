@@ -88,18 +88,23 @@ public class Storage {
     }
 
     private String formatTask(Task task) {
-        ArrayList<String> fields = new ArrayList<>();
-        fields.add(task.getType().getSymbol());
-        fields.add(task.isDone() ? "1" : "0");
-        fields.add(encode(task.getDescription()));
+        String type = task.getType().getSymbol();
+        String doneStatus = task.isDone() ? "1" : "0";
+        String description = encode(task.getDescription());
 
         if (task instanceof Deadline) {
-            fields.add(encode(((Deadline) task).getBy().toString()));
+            return formatFields(type, doneStatus, description,
+                    encode(((Deadline) task).getBy().toString()));
         } else if (task instanceof Event) {
-            fields.add(encode(((Event) task).getFrom()));
-            fields.add(encode(((Event) task).getTo()));
+            return formatFields(type, doneStatus, description,
+                    encode(((Event) task).getFrom()),
+                    encode(((Event) task).getTo()));
         }
 
+        return formatFields(type, doneStatus, description);
+    }
+
+    private String formatFields(String... fields) {
         return String.join(SEPARATOR, fields);
     }
 
