@@ -29,8 +29,8 @@ public class Ui {
      * @return greeting message.
      */
     public String getGreeting() {
-        return "Hey there! I'm Swell." + NEWLINE
-                + "Tell me what's on your mind.";
+        return joinLines("Hey there! I'm Swell.",
+                "Tell me what's on your mind.");
     }
 
     /**
@@ -100,10 +100,10 @@ public class Ui {
      * @return task-added confirmation text.
      */
     public String getTaskAddedText(Task task, int taskCount) {
-        return "Got it. I've added this task:" + NEWLINE
-                + " - " + task + NEWLINE
-                + "You now have " + taskCount + " task"
-                + getPluralSuffix(taskCount) + " in the list.";
+        return joinLines("Got it. I've added this task:",
+                " - " + task,
+                "You now have " + taskCount + " task"
+                        + getPluralSuffix(taskCount) + " in the list.");
     }
 
     /**
@@ -122,8 +122,8 @@ public class Ui {
      * @return task-marked confirmation text.
      */
     public String getTaskMarkedText(Task task) {
-        return "Nice! I've marked this task as done:" + NEWLINE
-                + " - " + task;
+        return joinLines("Nice! I've marked this task as done:",
+                " - " + task);
     }
 
     /**
@@ -142,8 +142,8 @@ public class Ui {
      * @return task-unmarked confirmation text.
      */
     public String getTaskUnmarkedText(Task task) {
-        return "No problem. I've marked this task as not done yet:" + NEWLINE
-                + " - " + task;
+        return joinLines("No problem. I've marked this task as not done yet:",
+                " - " + task);
     }
 
     /**
@@ -164,10 +164,10 @@ public class Ui {
      * @return task-deleted confirmation text.
      */
     public String getTaskDeletedText(Task task, int taskCount) {
-        return "Got it. I've removed this task:" + NEWLINE
-                + " - " + task + NEWLINE
-                + "You now have " + taskCount + " task"
-                + getPluralSuffix(taskCount) + " in the list.";
+        return joinLines("Got it. I've removed this task:",
+                " - " + task,
+                "You now have " + taskCount + " task"
+                        + getPluralSuffix(taskCount) + " in the list.");
     }
 
     /**
@@ -219,6 +219,10 @@ public class Ui {
 
     private String getPluralSuffix(int taskCount) {
         return taskCount == 1 ? "" : "s";
+    }
+
+    private String joinLines(String... lines) {
+        return String.join(NEWLINE, lines);
     }
 
     private void printBlock(String message, boolean shouldPrintLeadingBlankLine) {
