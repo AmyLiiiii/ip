@@ -47,7 +47,7 @@ public class Parser {
                 return createEvent(command);
             default:
                 throw new SwellException("I don't know that task type yet. Try todo, deadline, or event.");
-            }
+        }
     }
 
     /**

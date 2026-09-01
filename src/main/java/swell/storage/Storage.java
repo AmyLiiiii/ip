@@ -138,7 +138,7 @@ public class Storage {
                 return new Event(description, decode(fields[3]), decode(fields[4]));
             default:
                 throw new SwellException("A saved task has an unknown task type.");
-            }
+        }
     }
 
     private LocalDate parseSavedDate(String encodedDate) throws SwellException {
