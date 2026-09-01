@@ -13,10 +13,19 @@ import swell.ui.Ui;
  * Starts the Swell chatbot.
  */
 public class Swell {
+    private final Ui ui;
+    private final Storage storage;
+    private final TaskList tasks;
+    private boolean isExit;
+
     /**
-     * Prevents instantiation of this utility class.
+     * Creates a Swell chatbot and loads saved tasks.
      */
-    private Swell() {
+    public Swell() {
+        ui = new Ui();
+        storage = new Storage();
+        tasks = loadTasks(storage, ui);
+        isExit = false;
     }
 
     /**
@@ -25,12 +34,10 @@ public class Swell {
      * @param args command line arguments supplied to the program.
      */
     public static void main(String[] args) {
-        Ui ui = new Ui();
-        Storage storage = new Storage();
-        TaskList tasks = loadTasks(storage, ui);
+        Swell swell = new Swell();
 
         try (Scanner scanner = new Scanner(System.in)) {
-            ui.printGreeting();
+            swell.ui.printGreeting();
 
             while (scanner.hasNextLine()) {
                 String command = scanner.nextLine().trim();
@@ -38,18 +45,50 @@ public class Swell {
                     break;
                 }
 
-                try {
-                    boolean shouldSave = processCommand(tasks, command, ui);
-                    if (shouldSave) {
-                        storage.saveTasks(tasks);
-                    }
-                } catch (SwellException e) {
-                    ui.printError(e.getMessage());
-                }
+                String response = swell.getResponse(command);
+                swell.ui.printMessage(response);
             }
 
-            ui.printGoodbye();
+            swell.ui.printGoodbye();
         }
+    }
+
+    /**
+     * Returns the greeting message for GUI clients.
+     *
+     * @return greeting message.
+     */
+    public String getGreeting() {
+        return ui.getGreeting();
+    }
+
+    /**
+     * Returns Swell's response to one user command.
+     *
+     * @param command user command to process.
+     * @return response message.
+     */
+    public String getResponse(String command) {
+        String trimmedCommand = command.trim();
+        if (trimmedCommand.equals("bye")) {
+            isExit = true;
+            return ui.getGoodbye();
+        }
+
+        try {
+            return processCommand(trimmedCommand);
+        } catch (SwellException e) {
+            return ui.getErrorText(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns whether the user has entered the bye command.
+     *
+     * @return true if Swell should stop accepting input.
+     */
+    public boolean isExit() {
+        return isExit;
     }
 
     /**
@@ -77,7 +116,7 @@ public class Swell {
      * @return true if the task list should be saved after processing.
      * @throws SwellException if the command is invalid.
      */
-    private static boolean processCommand(TaskList tasks, String command, Ui ui) throws SwellException {
+    private String processCommand(String command) throws SwellException {
         if (command.isEmpty()) {
             throw new SwellException("I'm ready when you are. Try a command like todo read book.");
         }
@@ -86,25 +125,25 @@ public class Swell {
 
         switch (commandWord) {
             case "list":
-                ui.printTasks(tasks);
-                return false;
+                return ui.getTasksText(tasks);
             case "find":
-                ui.printMatchingTasks(tasks.findTasks(Parser.getFindKeyword(command)));
-                return false;
+                return ui.getMatchingTasksText(tasks.findTasks(Parser.getFindKeyword(command)));
             case "todo":
             case "deadline":
             case "event":
-                addTask(tasks, command, ui);
-                return true;
+                return addTask(command);
             case "mark":
-                ui.printTaskMarked(tasks.markTask(Parser.getTaskNumber(command, "mark")));
-                return true;
+                Task markedTask = tasks.markTask(Parser.getTaskNumber(command, "mark"));
+                storage.saveTasks(tasks);
+                return ui.getTaskMarkedText(markedTask);
             case "unmark":
-                ui.printTaskUnmarked(tasks.unmarkTask(Parser.getTaskNumber(command, "unmark")));
-                return true;
+                Task unmarkedTask = tasks.unmarkTask(Parser.getTaskNumber(command, "unmark"));
+                storage.saveTasks(tasks);
+                return ui.getTaskUnmarkedText(unmarkedTask);
             case "delete":
-                ui.printTaskDeleted(tasks.deleteTask(Parser.getTaskNumber(command, "delete")), tasks.size());
-                return true;
+                Task deletedTask = tasks.deleteTask(Parser.getTaskNumber(command, "delete"));
+                storage.saveTasks(tasks);
+                return ui.getTaskDeletedText(deletedTask, tasks.size());
             default:
                 throw new SwellException(
                         "I don't know that command yet. Try todo, deadline, event, list, find, "
@@ -117,13 +156,14 @@ public class Swell {
      *
      * @param tasks task list to update.
      * @param command user command containing the task details.
-     * @param ui user interface component used to show the added task.
+     * @return task-added confirmation text.
      * @throws SwellException if the command does not contain a valid task.
      */
-    private static void addTask(TaskList tasks, String command, Ui ui) throws SwellException {
+    private String addTask(String command) throws SwellException {
         Task task = Parser.getTask(command);
 
         tasks.add(task);
-        ui.printTaskAdded(task, tasks.size());
+        storage.saveTasks(tasks);
+        return ui.getTaskAddedText(task, tasks.size());
     }
 }
