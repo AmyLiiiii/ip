@@ -20,6 +20,10 @@ import javafx.scene.shape.Circle;
  * Represents one chat bubble with an avatar.
  */
 public class DialogBox extends HBox {
+    private static final String DIALOG_BOX_FXML = "/view/DialogBox.fxml";
+    private static final String REPLY_LABEL_STYLE_CLASS = "reply-label";
+    private static final double AVATAR_RADIUS = 32.0;
+
     @FXML
     private Label dialog;
 
@@ -28,7 +32,7 @@ public class DialogBox extends HBox {
 
     private DialogBox(String text, Image image) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource(DIALOG_BOX_FXML));
             fxmlLoader.setController(this);
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
@@ -70,7 +74,7 @@ public class DialogBox extends HBox {
         double xOffset = (image.getWidth() - sideLength) / 2;
         double yOffset = (image.getHeight() - sideLength) / 2;
         displayPicture.setViewport(new Rectangle2D(xOffset, yOffset, sideLength, sideLength));
-        displayPicture.setClip(new Circle(32.0, 32.0, 32.0));
+        displayPicture.setClip(new Circle(AVATAR_RADIUS, AVATAR_RADIUS, AVATAR_RADIUS));
     }
 
     private void flip() {
@@ -78,6 +82,6 @@ public class DialogBox extends HBox {
         ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
         Collections.reverse(children);
         getChildren().setAll(children);
-        dialog.getStyleClass().add("reply-label");
+        dialog.getStyleClass().add(REPLY_LABEL_STYLE_CLASS);
     }
 }
