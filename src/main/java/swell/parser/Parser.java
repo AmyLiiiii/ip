@@ -13,6 +13,25 @@ import swell.task.Todo;
  * Parses user commands into task objects and command arguments.
  */
 public class Parser {
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String FIND_COMMAND = "find";
+    private static final String DEADLINE_SEPARATOR = "\\s+/by\\s+";
+    private static final String EVENT_FROM_SEPARATOR = "\\s+/from\\s+";
+    private static final String EVENT_TO_SEPARATOR = "\\s+/to\\s+";
+    private static final String TODO_FORMAT_ERROR =
+            "A todo needs a description. Try: todo read book";
+    private static final String DEADLINE_FORMAT_ERROR =
+            "A deadline needs a description and /by. Try: deadline return book /by 2019-10-15";
+    private static final String DEADLINE_DATE_ERROR =
+            "Please use yyyy-mm-dd for deadlines. Try: deadline return book /by 2019-10-15";
+    private static final String EVENT_FORMAT_ERROR =
+            "An event needs a description, /from, and /to. "
+                    + "Try: event project meeting /from Mon 2pm /to 4pm";
+    private static final String FIND_FORMAT_ERROR =
+            "A find command needs a keyword. Try: find book";
+
     /**
      * Prevents instantiation of this utility class.
      */
@@ -39,11 +58,11 @@ public class Parser {
     public static Task getTask(String command) throws SwellException {
         String commandWord = getCommandWord(command);
         switch (commandWord) {
-            case "todo":
+            case TODO_COMMAND:
                 return createTodo(command);
-            case "deadline":
+            case DEADLINE_COMMAND:
                 return createDeadline(command);
-            case "event":
+            case EVENT_COMMAND:
                 return createEvent(command);
             default:
                 throw new SwellException("I don't know that task type yet. Try todo, deadline, or event.");
@@ -79,71 +98,67 @@ public class Parser {
      * @throws SwellException if the find command has no keyword.
      */
     public static String getFindKeyword(String command) throws SwellException {
-        String keyword = getCommandBody(command, "find");
-        if (keyword.isEmpty()) {
-            throw new SwellException("A find command needs a keyword. Try: find book");
-        }
-        return keyword;
+        return getRequiredCommandBody(command, FIND_COMMAND, FIND_FORMAT_ERROR);
     }
 
     private static Task createTodo(String command) throws SwellException {
-        String description = getCommandBody(command, "todo");
-        if (description.isEmpty()) {
-            throw new SwellException("A todo needs a description. Try: todo read book");
-        }
+        String description = getRequiredCommandBody(command, TODO_COMMAND, TODO_FORMAT_ERROR);
         return new Todo(description);
     }
 
     private static Task createDeadline(String command) throws SwellException {
-        String body = getCommandBody(command, "deadline");
-        String[] deadlineParts = body.split("\\s+/by\\s+", 2);
+        String body = getCommandBody(command, DEADLINE_COMMAND);
+        String[] deadlineParts = body.split(DEADLINE_SEPARATOR, 2);
         if (deadlineParts.length < 2) {
-            throw new SwellException(
-                    "A deadline needs a description and /by. "
-                            + "Try: deadline return book /by 2019-10-15");
+            throw new SwellException(DEADLINE_FORMAT_ERROR);
         }
 
         String description = deadlineParts[0].trim();
         String by = deadlineParts[1].trim();
-        if (description.isEmpty() || by.isEmpty()) {
-            throw new SwellException(
-                    "A deadline needs a description and /by. "
-                            + "Try: deadline return book /by 2019-10-15");
-        }
+        requireNonEmptyFields(DEADLINE_FORMAT_ERROR, description, by);
 
         try {
             return new Deadline(description, LocalDate.parse(by));
         } catch (DateTimeParseException e) {
-            throw new SwellException("Please use yyyy-mm-dd for deadlines. "
-                    + "Try: deadline return book /by 2019-10-15");
+            throw new SwellException(DEADLINE_DATE_ERROR);
         }
     }
 
     private static Task createEvent(String command) throws SwellException {
-        String body = getCommandBody(command, "event");
-        String[] eventParts = body.split("\\s+/from\\s+", 2);
+        String body = getCommandBody(command, EVENT_COMMAND);
+        String[] eventParts = body.split(EVENT_FROM_SEPARATOR, 2);
         if (eventParts.length < 2) {
-            throw new SwellException(
-                    "An event needs a description, /from, and /to. "
-                            + "Try: event project meeting /from Mon 2pm /to 4pm");
+            throw new SwellException(EVENT_FORMAT_ERROR);
         }
 
         String description = eventParts[0].trim();
-        String[] timeParts = eventParts[1].split("\\s+/to\\s+", 2);
+        String[] timeParts = eventParts[1].split(EVENT_TO_SEPARATOR, 2);
         if (timeParts.length < 2) {
-            throw new SwellException(
-                    "An event needs a description, /from, and /to. "
-                            + "Try: event project meeting /from Mon 2pm /to 4pm");
+            throw new SwellException(EVENT_FORMAT_ERROR);
         }
 
         String from = timeParts[0].trim();
         String to = timeParts[1].trim();
-        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new SwellException(
-                    "An event needs a description, /from, and /to. "
-                            + "Try: event project meeting /from Mon 2pm /to 4pm");
-        }
+        requireNonEmptyFields(EVENT_FORMAT_ERROR, description, from, to);
         return new Event(description, from, to);
+    }
+
+    private static String getRequiredCommandBody(String command, String commandWord,
+            String errorMessage) throws SwellException {
+        String body = getCommandBody(command, commandWord);
+        if (body.isEmpty()) {
+            throw new SwellException(errorMessage);
+        }
+        return body;
+    }
+
+    private static void requireNonEmptyFields(String errorMessage, String... fields)
+            throws SwellException {
+        for (String field : fields) {
+            if (field.isEmpty()) {
+                throw new SwellException(errorMessage);
+            }
+        }
     }
 
     private static String getCommandBody(String command, String commandWord) {
