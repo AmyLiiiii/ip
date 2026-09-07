@@ -1,5 +1,8 @@
 .root {
     -fx-background-color: #f5f7fb;
+    -fx-background-image: url("../images/StarrySky.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
 }
 
 .scroll-pane,
