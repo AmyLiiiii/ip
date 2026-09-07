@@ -23,6 +23,7 @@ public class TaskList {
      * @param tasks existing tasks to manage.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "Task list backing storage should not be null";
         this.tasks = tasks;
     }
 
@@ -32,6 +33,7 @@ public class TaskList {
      * @param task task to add.
      */
     public void add(Task task) {
+        assert task != null : "Only valid task objects should be added";
         tasks.add(task);
     }
 
@@ -132,6 +134,8 @@ public class TaskList {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new SwellException(getTaskNotFoundMessage(action));
         }
+
+        assert taskNumber >= 1 && taskNumber <= tasks.size() : "Validated task number should be in range";
         return tasks.get(taskNumber - 1);
     }
 
