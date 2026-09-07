@@ -1,6 +1,7 @@
 package swell.task;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import swell.exception.SwellException;
 
@@ -80,14 +81,10 @@ public class TaskList {
      * @return task list containing matching tasks.
      */
     public TaskList findTasks(String keyword) {
-        ArrayList<Task> matchingTasks = new ArrayList<>();
         String keywordLowerCase = keyword.toLowerCase();
-
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(keywordLowerCase)) {
-                matchingTasks.add(task);
-            }
-        }
+        ArrayList<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(keywordLowerCase))
+                .collect(Collectors.toCollection(ArrayList::new));
         return new TaskList(matchingTasks);
     }
 
