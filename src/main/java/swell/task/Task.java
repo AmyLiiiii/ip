@@ -1,11 +1,15 @@
 package swell.task;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 /**
  * Represents one task in Swell's task list.
  */
 public class Task {
     private final TaskType type;
     private final String description;
+    private final ArrayList<String> tags;
     private boolean isDone;
 
     /**
@@ -15,8 +19,20 @@ public class Task {
      * @param description task description.
      */
     public Task(TaskType type, String description) {
+        this(type, description, new ArrayList<>());
+    }
+
+    /**
+     * Creates a task with the given type, description, and tags.
+     *
+     * @param type task type.
+     * @param description task description.
+     * @param tags task tags.
+     */
+    public Task(TaskType type, String description, ArrayList<String> tags) {
         this.type = type;
         this.description = description;
+        this.tags = new ArrayList<>(tags);
         this.isDone = false;
     }
 
@@ -53,6 +69,25 @@ public class Task {
     }
 
     /**
+     * Returns this task's tags.
+     *
+     * @return copy of task tags.
+     */
+    public ArrayList<String> getTags() {
+        return new ArrayList<>(tags);
+    }
+
+    /**
+     * Returns whether this task has the given tag.
+     *
+     * @param tag tag to check.
+     * @return true if this task has the tag.
+     */
+    public boolean hasTag(String tag) {
+        return tags.stream().anyMatch(taskTag -> taskTag.equalsIgnoreCase(tag));
+    }
+
+    /**
      * Returns whether this task is marked as done.
      *
      * @return true if this task is done.
@@ -77,6 +112,17 @@ public class Task {
      */
     @Override
     public String toString() {
-        return "[" + type.getSymbol() + "][" + getStatusIcon() + "] " + description;
+        return "[" + type.getSymbol() + "][" + getStatusIcon() + "] "
+                + description + getTagText();
+    }
+
+    private String getTagText() {
+        if (tags.isEmpty()) {
+            return "";
+        }
+
+        return tags.stream()
+                .map(tag -> "#" + tag)
+                .collect(Collectors.joining(" ", " ", ""));
     }
 }

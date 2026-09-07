@@ -1,5 +1,7 @@
 package swell.task;
 
+import java.util.ArrayList;
+
 /**
  * Represents a task that happens over a period of time.
  */
@@ -16,6 +18,20 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(TaskType.EVENT, description);
+        this.from = from;
+        this.to = to;
+    }
+
+    /**
+     * Creates an event task with the given description, start, end, and tags.
+     *
+     * @param description task description.
+     * @param from event start text.
+     * @param to event end text.
+     * @param tags task tags.
+     */
+    public Event(String description, String from, String to, ArrayList<String> tags) {
+        super(TaskType.EVENT, description, tags);
         this.from = from;
         this.to = to;
     }
