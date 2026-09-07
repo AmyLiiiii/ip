@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import swell.exception.SwellException;
@@ -62,5 +65,19 @@ public class TaskListTest {
         tasks.add(new Todo("read book"));
 
         assertThrows(SwellException.class, () -> tasks.markTask(2));
+    }
+
+    @Test
+    public void findTasksByTag_matchingTag_returnsTaggedTasks() {
+        TaskList tasks = new TaskList();
+        Task taggedTask = new Todo("email recruiter", new ArrayList<>(List.of("Acme", "followup")));
+        Task untaggedTask = new Todo("read book");
+        tasks.add(taggedTask);
+        tasks.add(untaggedTask);
+
+        TaskList matchingTasks = tasks.findTasksByTag("followup");
+
+        assertEquals(1, matchingTasks.size());
+        assertSame(taggedTask, matchingTasks.get(0));
     }
 }
