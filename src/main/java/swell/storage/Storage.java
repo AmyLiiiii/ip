@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import swell.exception.SwellException;
 import swell.task.Deadline;
@@ -61,10 +62,9 @@ public class Storage {
     public void saveTasks(TaskList tasks) throws SwellException {
         ensureDataFileExists();
 
-        ArrayList<String> lines = new ArrayList<>();
-        for (Task task : tasks.asList()) {
-            lines.add(formatTask(task));
-        }
+        ArrayList<String> lines = tasks.asList().stream()
+                .map(this::formatTask)
+                .collect(Collectors.toCollection(ArrayList::new));
 
         try {
             Files.write(DATA_FILE, lines);
