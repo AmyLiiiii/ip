@@ -13,8 +13,11 @@ import swell.Swell;
  * Controls the main Swell chat window.
  */
 public class MainWindow extends AnchorPane {
-    private final Image userImage = new Image(getClass().getResourceAsStream("/images/Moon.png"));
-    private final Image swellImage = new Image(getClass().getResourceAsStream("/images/Star.png"));
+    private static final String USER_AVATAR_PATH = "/images/Moon.png";
+    private static final String SWELL_AVATAR_PATH = "/images/Star.png";
+
+    private final Image userImage = new Image(getClass().getResourceAsStream(USER_AVATAR_PATH));
+    private final Image swellImage = new Image(getClass().getResourceAsStream(SWELL_AVATAR_PATH));
 
     @FXML
     private ScrollPane scrollPane;
@@ -66,8 +69,12 @@ public class MainWindow extends AnchorPane {
         userInput.clear();
 
         if (swell.isExit()) {
-            userInput.setDisable(true);
-            sendButton.setDisable(true);
+            disableInputControls();
         }
+    }
+
+    private void disableInputControls() {
+        userInput.setDisable(true);
+        sendButton.setDisable(true);
     }
 }
