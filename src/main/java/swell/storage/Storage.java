@@ -91,17 +91,20 @@ public class Storage {
         String type = task.getType().getSymbol();
         String doneStatus = task.isDone() ? "1" : "0";
         String description = encode(task.getDescription());
+        String tags = formatTags(task);
 
         if (task instanceof Deadline) {
             return formatFields(type, doneStatus, description,
-                    encode(((Deadline) task).getBy().toString()));
+                    encode(((Deadline) task).getBy().toString()),
+                    tags);
         } else if (task instanceof Event) {
             return formatFields(type, doneStatus, description,
                     encode(((Event) task).getFrom()),
-                    encode(((Event) task).getTo()));
+                    encode(((Event) task).getTo()),
+                    tags);
         }
 
-        return formatFields(type, doneStatus, description);
+        return formatFields(type, doneStatus, description, tags);
     }
 
     private String formatFields(String... fields) {
@@ -128,26 +131,47 @@ public class Storage {
         String description = decode(fields[2]);
         switch (fields[0]) {
             case "T":
-                if (fields.length != 3) {
+                if (fields.length != 3 && fields.length != 4) {
                     throw new SwellException("A saved todo task has the wrong format.");
                 }
-                assert fields.length == 3 : "Todo storage rows should have exactly three fields";
-                return new Todo(description);
+                assert fields.length == 3 || fields.length == 4
+                        : "Todo storage rows should have three fields or an added tag field";
+                return new Todo(description, parseTags(fields, 3));
             case "D":
-                if (fields.length != 4) {
+                if (fields.length != 4 && fields.length != 5) {
                     throw new SwellException("A saved deadline task has the wrong format.");
                 }
-                assert fields.length == 4 : "Deadline storage rows should have exactly four fields";
-                return new Deadline(description, parseSavedDate(fields[3]));
+                assert fields.length == 4 || fields.length == 5
+                        : "Deadline storage rows should have four fields or an added tag field";
+                return new Deadline(description, parseSavedDate(fields[3]), parseTags(fields, 4));
             case "E":
-                if (fields.length != 5) {
+                if (fields.length != 5 && fields.length != 6) {
                     throw new SwellException("A saved event task has the wrong format.");
                 }
-                assert fields.length == 5 : "Event storage rows should have exactly five fields";
-                return new Event(description, decode(fields[3]), decode(fields[4]));
+                assert fields.length == 5 || fields.length == 6
+                        : "Event storage rows should have five fields or an added tag field";
+                return new Event(description, decode(fields[3]), decode(fields[4]), parseTags(fields, 5));
             default:
                 throw new SwellException("A saved task has an unknown task type.");
         }
+    }
+
+    private String formatTags(Task task) {
+        return task.getTags().stream()
+                .map(this::encode)
+                .collect(Collectors.joining(","));
+    }
+
+    private ArrayList<String> parseTags(String[] fields, int tagIndex) {
+        ArrayList<String> tags = new ArrayList<>();
+        if (fields.length <= tagIndex || fields[tagIndex].isEmpty()) {
+            return tags;
+        }
+
+        for (String tag : fields[tagIndex].split(",")) {
+            tags.add(decode(tag));
+        }
+        return tags;
     }
 
     private LocalDate parseSavedDate(String encodedDate) throws SwellException {

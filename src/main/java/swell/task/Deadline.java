@@ -2,6 +2,7 @@ package swell.task;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -21,6 +22,18 @@ public class Deadline extends Task {
      */
     public Deadline(String description, LocalDate by) {
         super(TaskType.DEADLINE, description);
+        this.by = by;
+    }
+
+    /**
+     * Creates a deadline task with the given description, deadline date, and tags.
+     *
+     * @param description task description.
+     * @param by deadline date.
+     * @param tags task tags.
+     */
+    public Deadline(String description, LocalDate by, ArrayList<String> tags) {
+        super(TaskType.DEADLINE, description, tags);
         this.by = by;
     }
 

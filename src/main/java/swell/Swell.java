@@ -16,6 +16,7 @@ public class Swell {
     private static final String BYE_COMMAND = "bye";
     private static final String LIST_COMMAND = "list";
     private static final String FIND_COMMAND = "find";
+    private static final String FIND_TAG_COMMAND = "findtag";
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
@@ -25,7 +26,7 @@ public class Swell {
     private static final String EMPTY_COMMAND_ERROR =
             "I'm ready when you are. Try a command like todo read book.";
     private static final String UNKNOWN_COMMAND_ERROR =
-            "I don't know that command yet. Try todo, deadline, event, list, find, "
+            "I don't know that command yet. Try todo, deadline, event, list, find, findtag, "
                     + "mark, unmark, delete, or bye.";
 
     private final Ui ui;
@@ -141,6 +142,8 @@ public class Swell {
                 return ui.getTasksText(tasks);
             case FIND_COMMAND:
                 return ui.getMatchingTasksText(tasks.findTasks(Parser.getFindKeyword(command)));
+            case FIND_TAG_COMMAND:
+                return ui.getMatchingTasksText(tasks.findTasksByTag(Parser.getTagKeyword(command)));
             case TODO_COMMAND:
             case DEADLINE_COMMAND:
             case EVENT_COMMAND:
