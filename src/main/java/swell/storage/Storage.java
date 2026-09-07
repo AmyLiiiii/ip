@@ -115,6 +115,7 @@ public class Storage {
         }
 
         Task task = createTaskFromFields(fields);
+        assert task != null : "Saved task fields should create a task before applying done status";
         if (fields[1].equals("1")) {
             task.markAsDone();
         } else if (!fields[1].equals("0")) {
@@ -130,16 +131,19 @@ public class Storage {
                 if (fields.length != 3) {
                     throw new SwellException("A saved todo task has the wrong format.");
                 }
+                assert fields.length == 3 : "Todo storage rows should have exactly three fields";
                 return new Todo(description);
             case "D":
                 if (fields.length != 4) {
                     throw new SwellException("A saved deadline task has the wrong format.");
                 }
+                assert fields.length == 4 : "Deadline storage rows should have exactly four fields";
                 return new Deadline(description, parseSavedDate(fields[3]));
             case "E":
                 if (fields.length != 5) {
                     throw new SwellException("A saved event task has the wrong format.");
                 }
+                assert fields.length == 5 : "Event storage rows should have exactly five fields";
                 return new Event(description, decode(fields[3]), decode(fields[4]));
             default:
                 throw new SwellException("A saved task has an unknown task type.");
