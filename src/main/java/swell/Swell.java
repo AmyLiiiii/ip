@@ -13,6 +13,21 @@ import swell.ui.Ui;
  * Starts the Swell chatbot.
  */
 public class Swell {
+    private static final String BYE_COMMAND = "bye";
+    private static final String LIST_COMMAND = "list";
+    private static final String FIND_COMMAND = "find";
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String MARK_COMMAND = "mark";
+    private static final String UNMARK_COMMAND = "unmark";
+    private static final String DELETE_COMMAND = "delete";
+    private static final String EMPTY_COMMAND_ERROR =
+            "I'm ready when you are. Try a command like todo read book.";
+    private static final String UNKNOWN_COMMAND_ERROR =
+            "I don't know that command yet. Try todo, deadline, event, list, find, "
+                    + "mark, unmark, delete, or bye.";
+
     private final Ui ui;
     private final Storage storage;
     private final TaskList tasks;
@@ -41,7 +56,7 @@ public class Swell {
 
             while (scanner.hasNextLine()) {
                 String command = scanner.nextLine().trim();
-                if (command.equals("bye")) {
+                if (command.equals(BYE_COMMAND)) {
                     break;
                 }
 
@@ -70,7 +85,7 @@ public class Swell {
      */
     public String getResponse(String command) {
         String trimmedCommand = command.trim();
-        if (trimmedCommand.equals("bye")) {
+        if (trimmedCommand.equals(BYE_COMMAND)) {
             isExit = true;
             return ui.getGoodbye();
         }
@@ -110,51 +125,40 @@ public class Swell {
     /**
      * Processes one user command.
      *
-     * @param tasks task list to update.
      * @param command user command to process.
-     * @param ui user interface component used to show command results.
-     * @return true if the task list should be saved after processing.
+     * @return response text for the command.
      * @throws SwellException if the command is invalid.
      */
     private String processCommand(String command) throws SwellException {
         if (command.isEmpty()) {
-            throw new SwellException("I'm ready when you are. Try a command like todo read book.");
+            throw new SwellException(EMPTY_COMMAND_ERROR);
         }
 
         String commandWord = Parser.getCommandWord(command);
 
         switch (commandWord) {
-            case "list":
+            case LIST_COMMAND:
                 return ui.getTasksText(tasks);
-            case "find":
+            case FIND_COMMAND:
                 return ui.getMatchingTasksText(tasks.findTasks(Parser.getFindKeyword(command)));
-            case "todo":
-            case "deadline":
-            case "event":
+            case TODO_COMMAND:
+            case DEADLINE_COMMAND:
+            case EVENT_COMMAND:
                 return addTask(command);
-            case "mark":
-                Task markedTask = tasks.markTask(Parser.getTaskNumber(command, "mark"));
-                storage.saveTasks(tasks);
-                return ui.getTaskMarkedText(markedTask);
-            case "unmark":
-                Task unmarkedTask = tasks.unmarkTask(Parser.getTaskNumber(command, "unmark"));
-                storage.saveTasks(tasks);
-                return ui.getTaskUnmarkedText(unmarkedTask);
-            case "delete":
-                Task deletedTask = tasks.deleteTask(Parser.getTaskNumber(command, "delete"));
-                storage.saveTasks(tasks);
-                return ui.getTaskDeletedText(deletedTask, tasks.size());
+            case MARK_COMMAND:
+                return markTask(command);
+            case UNMARK_COMMAND:
+                return unmarkTask(command);
+            case DELETE_COMMAND:
+                return deleteTask(command);
             default:
-                throw new SwellException(
-                        "I don't know that command yet. Try todo, deadline, event, list, find, "
-                                + "mark, unmark, delete, or bye.");
+                throw new SwellException(UNKNOWN_COMMAND_ERROR);
         }
     }
 
     /**
      * Adds a todo, deadline, or event based on the user command.
      *
-     * @param tasks task list to update.
      * @param command user command containing the task details.
      * @return task-added confirmation text.
      * @throws SwellException if the command does not contain a valid task.
@@ -165,5 +169,23 @@ public class Swell {
         tasks.add(task);
         storage.saveTasks(tasks);
         return ui.getTaskAddedText(task, tasks.size());
+    }
+
+    private String markTask(String command) throws SwellException {
+        Task markedTask = tasks.markTask(Parser.getTaskNumber(command, MARK_COMMAND));
+        storage.saveTasks(tasks);
+        return ui.getTaskMarkedText(markedTask);
+    }
+
+    private String unmarkTask(String command) throws SwellException {
+        Task unmarkedTask = tasks.unmarkTask(Parser.getTaskNumber(command, UNMARK_COMMAND));
+        storage.saveTasks(tasks);
+        return ui.getTaskUnmarkedText(unmarkedTask);
+    }
+
+    private String deleteTask(String command) throws SwellException {
+        Task deletedTask = tasks.deleteTask(Parser.getTaskNumber(command, DELETE_COMMAND));
+        storage.saveTasks(tasks);
+        return ui.getTaskDeletedText(deletedTask, tasks.size());
     }
 }

@@ -9,6 +9,7 @@ import swell.task.TaskList;
 public class Ui {
     private static final String LINE = "____________________________________________________________";
     private static final String NEWLINE = System.lineSeparator();
+    private static final String TASK_LINE_PREFIX = " - ";
 
     /**
      * Creates a user interface component for printing chatbot messages.
@@ -101,9 +102,8 @@ public class Ui {
      */
     public String getTaskAddedText(Task task, int taskCount) {
         return joinLines("Got it. I've added this task:",
-                " - " + task,
-                "You now have " + taskCount + " task"
-                        + getPluralSuffix(taskCount) + " in the list.");
+                getTaskLine(task),
+                getTaskCountText(taskCount));
     }
 
     /**
@@ -123,7 +123,7 @@ public class Ui {
      */
     public String getTaskMarkedText(Task task) {
         return joinLines("Nice! I've marked this task as done:",
-                " - " + task);
+                getTaskLine(task));
     }
 
     /**
@@ -143,7 +143,7 @@ public class Ui {
      */
     public String getTaskUnmarkedText(Task task) {
         return joinLines("No problem. I've marked this task as not done yet:",
-                " - " + task);
+                getTaskLine(task));
     }
 
     /**
@@ -165,9 +165,8 @@ public class Ui {
      */
     public String getTaskDeletedText(Task task, int taskCount) {
         return joinLines("Got it. I've removed this task:",
-                " - " + task,
-                "You now have " + taskCount + " task"
-                        + getPluralSuffix(taskCount) + " in the list.");
+                getTaskLine(task),
+                getTaskCountText(taskCount));
     }
 
     /**
@@ -219,6 +218,15 @@ public class Ui {
 
     private String getPluralSuffix(int taskCount) {
         return taskCount == 1 ? "" : "s";
+    }
+
+    private String getTaskLine(Task task) {
+        return TASK_LINE_PREFIX + task;
+    }
+
+    private String getTaskCountText(int taskCount) {
+        return "You now have " + taskCount + " task"
+                + getPluralSuffix(taskCount) + " in the list.";
     }
 
     private String joinLines(String... lines) {
