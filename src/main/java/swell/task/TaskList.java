@@ -91,6 +91,19 @@ public class TaskList {
     }
 
     /**
+     * Returns tasks that have the given tag.
+     *
+     * @param tag tag to search for.
+     * @return task list containing tasks with the tag.
+     */
+    public TaskList findTasksByTag(String tag) {
+        ArrayList<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.hasTag(tag))
+                .collect(Collectors.toCollection(ArrayList::new));
+        return new TaskList(matchingTasks);
+    }
+
+    /**
      * Returns the number of tasks in the list.
      *
      * @return number of tasks.
