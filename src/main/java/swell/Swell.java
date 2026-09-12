@@ -24,9 +24,9 @@ public class Swell {
     private static final String UNMARK_COMMAND = "unmark";
     private static final String DELETE_COMMAND = "delete";
     private static final String EMPTY_COMMAND_ERROR =
-            "I'm ready when you are. Try a command like todo read book.";
+            "I need a command before we can move. Try: todo read book";
     private static final String UNKNOWN_COMMAND_ERROR =
-            "I don't know that command yet. Try todo, deadline, event, list, find, findtag, "
+            "That signal is not on my chart yet. Try todo, deadline, event, list, find, findtag, "
                     + "mark, unmark, delete, or bye.";
 
     private final Ui ui;
