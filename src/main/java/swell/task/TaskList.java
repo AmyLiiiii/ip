@@ -43,7 +43,7 @@ public class TaskList {
      *
      * @param taskNumber one-based task number.
      * @return task that was marked as done.
-     * @throws SwellException if the task number is outside the current list.
+     * @throws SwellException if the task number is outside the current list or the task is already done.
      */
     public Task markTask(int taskNumber) throws SwellException {
         Task task = getTask(taskNumber, "mark");
@@ -56,7 +56,7 @@ public class TaskList {
      *
      * @param taskNumber one-based task number.
      * @return task that was marked as not done.
-     * @throws SwellException if the task number is outside the current list.
+     * @throws SwellException if the task number is outside the current list or the task is already not done.
      */
     public Task unmarkTask(int taskNumber) throws SwellException {
         Task task = getTask(taskNumber, "unmark");

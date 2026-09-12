@@ -58,6 +58,39 @@ Run the JAR file:
 java -jar build/libs/swell.jar
 ```
 
+## Command Format
+
+Swell uses short text commands in this general format:
+
+```text
+COMMAND REQUIRED_DETAILS [OPTIONAL_DETAILS]
+```
+
+Correct examples:
+
+```text
+todo read book #school
+deadline submit report /by 2026-09-18
+event project meeting /from Monday 2pm /to 4pm
+event quick sync /from Monday /to Monday
+mark 1
+delete 2
+findtag #school
+```
+
+Incorrect examples:
+
+```text
+todo
+deadline submit report /by Sunday
+deadline submit report /by 2026-09-18 /by 2026-09-19
+event project meeting /from Monday
+mark 1 2
+findtag follow up
+```
+
+See `docs/README.md` for the full user guide.
+
 ## Project Architecture
 
 Swell is organized into small classes with clear responsibilities:

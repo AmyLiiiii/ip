@@ -69,8 +69,33 @@ public class ParserTest {
     }
 
     @Test
+    public void getTagKeyword_keywordWithSpaces_throwsSwellException() {
+        assertThrows(SwellException.class, () -> Parser.getTagKeyword("findtag follow up"));
+    }
+
+    @Test
     public void getTask_deadlineCommandWithInvalidDate_throwsSwellException() {
         assertThrows(SwellException.class, () -> Parser.getTask("deadline return book /by Sunday"));
+    }
+
+    @Test
+    public void getTask_deadlineCommandWithMultipleByPrefixes_throwsSwellException() {
+        assertThrows(SwellException.class, () ->
+                Parser.getTask("deadline return book /by 2019-10-15 /by 2019-10-16"));
+    }
+
+    @Test
+    public void getTask_eventCommandWithMultipleFromPrefixes_throwsSwellException() {
+        assertThrows(SwellException.class, () ->
+                Parser.getTask("event meeting /from Mon /from Tue /to Wed"));
+    }
+
+    @Test
+    public void getTask_eventCommandWithSameFromAndTo_returnsEventTask() throws SwellException {
+        Task task = Parser.getTask("event meeting /from Mon /to Mon");
+
+        assertInstanceOf(Event.class, task);
+        assertEquals("[E][ ] meeting (from: Mon to: Mon)", task.toString());
     }
 
     @Test
@@ -81,5 +106,15 @@ public class ParserTest {
     @Test
     public void getTaskNumber_missingNumber_throwsSwellException() {
         assertThrows(SwellException.class, () -> Parser.getTaskNumber("delete", "delete"));
+    }
+
+    @Test
+    public void getTaskNumber_extraArgument_throwsSwellException() {
+        assertThrows(SwellException.class, () -> Parser.getTaskNumber("mark 1 2", "mark"));
+    }
+
+    @Test
+    public void getTaskNumber_zero_throwsSwellException() {
+        assertThrows(SwellException.class, () -> Parser.getTaskNumber("delete 0", "delete"));
     }
 }

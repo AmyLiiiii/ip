@@ -3,6 +3,8 @@ package swell.task;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import swell.exception.SwellException;
+
 /**
  * Represents one task in Swell's task list.
  */
@@ -39,14 +41,20 @@ public class Task {
     /**
      * Marks this task as done.
      */
-    public void markAsDone() {
+    public void markAsDone() throws SwellException {
+        if (isDone) {
+            throw new SwellException("That task is already marked as done.");
+        }
         this.isDone = true;
     }
 
     /**
      * Marks this task as not done.
      */
-    public void markAsNotDone() {
+    public void markAsNotDone() throws SwellException {
+        if (!isDone) {
+            throw new SwellException("That task is already marked as not done.");
+        }
         this.isDone = false;
     }
 
