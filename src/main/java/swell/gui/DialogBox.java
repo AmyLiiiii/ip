@@ -21,8 +21,12 @@ import javafx.scene.shape.Circle;
  */
 public class DialogBox extends HBox {
     private static final String DIALOG_BOX_FXML = "/view/DialogBox.fxml";
+    private static final String DIALOG_BUBBLE_STYLE_CLASS = "dialog-bubble";
+    private static final String USER_LABEL_STYLE_CLASS = "user-label";
     private static final String REPLY_LABEL_STYLE_CLASS = "reply-label";
-    private static final double AVATAR_RADIUS = 32.0;
+    private static final String ERROR_LABEL_STYLE_CLASS = "error-label";
+    private static final double AVATAR_RADIUS = 18.0;
+    private static final double MAX_BUBBLE_WIDTH_RATIO = 0.74;
 
     @FXML
     private Label dialog;
@@ -41,6 +45,8 @@ public class DialogBox extends HBox {
         }
 
         dialog.setText(text);
+        dialog.getStyleClass().add(DIALOG_BUBBLE_STYLE_CLASS);
+        dialog.maxWidthProperty().bind(widthProperty().multiply(MAX_BUBBLE_WIDTH_RATIO));
         displayPicture.setImage(image);
         setRoundAvatar(image);
     }
@@ -53,7 +59,9 @@ public class DialogBox extends HBox {
      * @return user dialog box.
      */
     public static DialogBox getUserDialog(String text, Image image) {
-        return new DialogBox(text, image);
+        DialogBox dialogBox = new DialogBox(text, image);
+        dialogBox.dialog.getStyleClass().add(USER_LABEL_STYLE_CLASS);
+        return dialogBox;
     }
 
     /**
@@ -66,6 +74,19 @@ public class DialogBox extends HBox {
     public static DialogBox getSwellDialog(String text, Image image) {
         DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
+        return dialogBox;
+    }
+
+    /**
+     * Returns a left-aligned dialog box for Swell's error response.
+     *
+     * @param text text to show.
+     * @param image avatar image.
+     * @return Swell error dialog box.
+     */
+    public static DialogBox getSwellErrorDialog(String text, Image image) {
+        DialogBox dialogBox = getSwellDialog(text, image);
+        dialogBox.dialog.getStyleClass().add(ERROR_LABEL_STYLE_CLASS);
         return dialogBox;
     }
 

@@ -10,6 +10,17 @@
     -fx-background-color: transparent;
 }
 
+#dialogContainer {
+    -fx-padding: 10px 4px 10px 4px;
+}
+
+.input-bar {
+    -fx-background-color: rgba(248, 250, 252, 0.96);
+    -fx-border-color: #d8e0ec transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 8px;
+}
+
 .scroll-bar {
     -fx-font-size: 10px;
 }
@@ -17,14 +28,15 @@
 .text-field {
     -fx-background-color: white;
     -fx-border-color: #c7d2e0;
-    -fx-border-radius: 4px 0 0 4px;
-    -fx-background-radius: 4px 0 0 4px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
     -fx-font: 15px "Arial";
+    -fx-prompt-text-fill: #64748b;
 }
 
 .button {
     -fx-background-color: #2563eb;
-    -fx-background-radius: 0 4px 4px 0;
+    -fx-background-radius: 6px;
     -fx-text-fill: white;
     -fx-font: bold 14px "Arial";
 }
