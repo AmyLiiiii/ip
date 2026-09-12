@@ -1,6 +1,7 @@
-# Swell project template
+# Swell
 
-This is a project template for a greenfield Java project. It's named _Swell_. Given below are instructions on how to use it.
+Swell is a Java task chatbot with a calm task navigator personality. It helps users keep track of todos,
+deadlines, events, tags, and searches using short text commands.
 
 ## Setting up in Intellij
 
@@ -16,8 +17,8 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 1. After that, locate the `src/main/java/swell/Swell.java` file, right-click it, and choose `Run Swell.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
     ```
     ____________________________________________________________
-     Hey there! I'm Swell.
-     Tell me what's on your mind.
+     Hi, I'm Swell, your calm task navigator.
+     Send me a task, and we'll chart a steady course.
     ____________________________________________________________
     ```
 
