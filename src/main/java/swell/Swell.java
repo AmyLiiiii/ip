@@ -38,8 +38,17 @@ public class Swell {
      * Creates a Swell chatbot and loads saved tasks.
      */
     public Swell() {
+        this(new Storage());
+    }
+
+    /**
+     * Creates a Swell chatbot using the given storage component.
+     *
+     * @param storage storage component used to load and save tasks.
+     */
+    Swell(Storage storage) {
         ui = new Ui();
-        storage = new Storage();
+        this.storage = storage;
         tasks = loadTasks(storage, ui);
         isExit = false;
     }
