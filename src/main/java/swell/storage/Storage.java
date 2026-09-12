@@ -22,13 +22,25 @@ import swell.task.Todo;
  * Handles loading and saving Swell tasks.
  */
 public class Storage {
-    private static final Path DATA_FILE = Path.of("data", "swell.txt");
+    private static final Path DEFAULT_DATA_FILE = Path.of("data", "swell.txt");
     private static final String SEPARATOR = " | ";
+
+    private final Path dataFile;
 
     /**
      * Creates a storage component that reads and writes Swell's data file.
      */
     public Storage() {
+        this(DEFAULT_DATA_FILE);
+    }
+
+    /**
+     * Creates a storage component that reads and writes the given data file.
+     *
+     * @param dataFile data file path.
+     */
+    public Storage(Path dataFile) {
+        this.dataFile = dataFile;
     }
 
     /**
@@ -42,7 +54,7 @@ public class Storage {
 
         ArrayList<Task> tasks = new ArrayList<>();
         try {
-            for (String line : Files.readAllLines(DATA_FILE)) {
+            for (String line : Files.readAllLines(dataFile)) {
                 if (!line.trim().isEmpty()) {
                     tasks.add(parseTask(line));
                 }
@@ -67,7 +79,7 @@ public class Storage {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         try {
-            Files.write(DATA_FILE, lines);
+            Files.write(dataFile, lines);
         } catch (IOException e) {
             throw new SwellException("I couldn't save the task list this time.");
         }
@@ -75,12 +87,12 @@ public class Storage {
 
     private void ensureDataFileExists() throws SwellException {
         try {
-            Path parent = DATA_FILE.getParent();
+            Path parent = dataFile.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            if (Files.notExists(DATA_FILE)) {
-                Files.createFile(DATA_FILE);
+            if (Files.notExists(dataFile)) {
+                Files.createFile(dataFile);
             }
         } catch (IOException e) {
             throw new SwellException("I couldn't prepare the data file for saving tasks.");
