@@ -70,9 +70,9 @@ Correct examples:
 
 ```text
 todo read book #school
-deadline submit report /by 2026-09-18
-event project meeting /from Monday 2pm /to 4pm
-event quick sync /from Monday /to Monday
+deadline submit report /by 2026-09-18 2359
+event project meeting /from 2026-09-19 1400 /to 2026-09-19 1600
+event quick sync /from 2026-09-19 /to 2026-09-19
 mark 1
 delete 2
 findtag #school
@@ -84,7 +84,7 @@ Incorrect examples:
 todo
 deadline submit report /by Sunday
 deadline submit report /by 2026-09-18 /by 2026-09-19
-event project meeting /from Monday
+event project meeting /from Monday 2pm
 mark 1 2
 findtag follow up
 ```

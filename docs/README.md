@@ -39,12 +39,14 @@ mark 1 2
 delete one
 ```
 
-For deadline commands, use `/by` exactly once and write the date as `YYYY-MM-DD`.
+For deadline commands, use `/by` exactly once and write the date as `YYYY-MM-DD`
+or `YYYY-MM-DD HHmm`.
 
 Correct:
 
 ```text
 deadline submit report /by 2026-09-18
+deadline submit report /by 2026-09-18 2359
 ```
 
 Incorrect:
@@ -56,20 +58,22 @@ deadline submit report /by 2026-09-18 /by 2026-09-19
 ```
 
 For event commands, use `/from` exactly once and `/to` exactly once. The `/from` and `/to`
-values may be the same if the event happens at one point in time.
+values may be the same if the event happens at one point in time. Write each date or
+date-time as `YYYY-MM-DD` or `YYYY-MM-DD HHmm`.
 
 Correct:
 
 ```text
-event project meeting /from Monday 2pm /to 4pm
-event quick sync /from Monday /to Monday
+event project meeting /from 2026-09-19 1400 /to 2026-09-19 1600
+event quick sync /from 2026-09-19 /to 2026-09-19
 ```
 
 Incorrect:
 
 ```text
 event project meeting /from Monday 2pm
-event project meeting /from Monday 2pm /from Tuesday 2pm /to 4pm
+event project meeting /from 2026-09-19 1400
+event project meeting /from 2026-09-19 1400 /from 2026-09-20 1400 /to 2026-09-20 1600
 ```
 
 For tags, use letters, numbers, hyphens, or underscores only. Tags can be written with or
@@ -117,18 +121,18 @@ There is now 1 task on board.
 
 ## Adding Deadlines
 
-Use `deadline` for tasks that must be done by a specific date.
+Use `deadline` for tasks that must be done by a specific date or date-time.
 
 Format:
 
 ```text
-deadline DESCRIPTION [#TAG]... /by YYYY-MM-DD
+deadline DESCRIPTION [#TAG]... /by YYYY-MM-DD [HHmm]
 ```
 
 Example:
 
 ```text
-deadline submit report #cs2103 /by 2026-09-18
+deadline submit report #cs2103 /by 2026-09-18 2359
 ```
 
 ## Adding Events
@@ -138,13 +142,13 @@ Use `event` for tasks that happen over a time period.
 Format:
 
 ```text
-event DESCRIPTION [#TAG]... /from START /to END
+event DESCRIPTION [#TAG]... /from YYYY-MM-DD [HHmm] /to YYYY-MM-DD [HHmm]
 ```
 
 Example:
 
 ```text
-event project meeting #team /from Monday 2pm /to 4pm
+event project meeting #team /from 2026-09-19 1400 /to 2026-09-19 1600
 ```
 
 ## Viewing Tasks
@@ -225,7 +229,7 @@ Some examples of commands Swell will reject:
 ```text
 todo
 deadline submit report /by Sunday
-event project meeting /from Monday
+event project meeting /from Monday 2pm
 findtag follow up
 delete one
 ```
