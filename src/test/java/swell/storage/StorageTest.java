@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.io.TempDir;
 import swell.exception.SwellException;
 import swell.task.Deadline;
 import swell.task.Event;
+import swell.task.TaskDateTime;
 import swell.task.TaskList;
 import swell.task.Todo;
 
@@ -40,9 +41,12 @@ public class StorageTest {
         Storage storage = new Storage(getDataFile());
         TaskList tasks = new TaskList();
         Todo todo = new Todo("read book", new ArrayList<>(List.of("school")));
-        Deadline deadline = new Deadline("submit report", LocalDate.of(2026, 9, 18),
+        Deadline deadline = new Deadline("submit report",
+                TaskDateTime.of(LocalDateTime.of(2026, 9, 18, 23, 59)),
                 new ArrayList<>(List.of("cs2103")));
-        Event event = new Event("project meeting", "Monday 2pm", "4pm",
+        Event event = new Event("project meeting",
+                TaskDateTime.of(LocalDateTime.of(2026, 9, 19, 14, 0)),
+                TaskDateTime.of(LocalDateTime.of(2026, 9, 19, 16, 0)),
                 new ArrayList<>(List.of("team")));
         deadline.markAsDone();
         tasks.add(todo);
@@ -54,9 +58,10 @@ public class StorageTest {
 
         assertEquals(3, loadedTasks.size());
         assertEquals("[T][ ] read book #school", loadedTasks.get(0).toString());
-        assertEquals("[D][X] submit report #cs2103 (by: Sep 18 2026)",
+        assertEquals("[D][X] submit report #cs2103 (by: Sep 18 2026 11:59 PM)",
                 loadedTasks.get(1).toString());
-        assertEquals("[E][ ] project meeting #team (from: Monday 2pm to: 4pm)",
+        assertEquals("[E][ ] project meeting #team (from: Sep 19 2026 2:00 PM "
+                        + "to: Sep 19 2026 4:00 PM)",
                 loadedTasks.get(2).toString());
         assertTrue(loadedTasks.get(1).isDone());
     }
