@@ -6,17 +6,17 @@ import java.util.ArrayList;
  * Represents a task that happens over a period of time.
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private final TaskDateTime from;
+    private final TaskDateTime to;
 
     /**
-     * Creates an event task with the given description, start, and end text.
+     * Creates an event task with the given description, start, and end date-time.
      *
      * @param description task description.
-     * @param from event start text.
-     * @param to event end text.
+     * @param from event start date-time.
+     * @param to event end date-time.
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, TaskDateTime from, TaskDateTime to) {
         super(TaskType.EVENT, description);
         this.from = from;
         this.to = to;
@@ -26,31 +26,31 @@ public class Event extends Task {
      * Creates an event task with the given description, start, end, and tags.
      *
      * @param description task description.
-     * @param from event start text.
-     * @param to event end text.
+     * @param from event start date-time.
+     * @param to event end date-time.
      * @param tags task tags.
      */
-    public Event(String description, String from, String to, ArrayList<String> tags) {
+    public Event(String description, TaskDateTime from, TaskDateTime to, ArrayList<String> tags) {
         super(TaskType.EVENT, description, tags);
         this.from = from;
         this.to = to;
     }
 
     /**
-     * Returns the event start text.
+     * Returns the event start date-time.
      *
-     * @return event start text.
+     * @return event start date-time.
      */
-    public String getFrom() {
+    public TaskDateTime getFrom() {
         return from;
     }
 
     /**
-     * Returns the event end text.
+     * Returns the event end date-time.
      *
-     * @return event end text.
+     * @return event end date-time.
      */
-    public String getTo() {
+    public TaskDateTime getTo() {
         return to;
     }
 
@@ -59,6 +59,7 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return super.toString() + " (from: " + from + " to: " + to + ")";
+        return super.toString() + " (from: " + from.toDisplayString()
+                + " to: " + to.toDisplayString() + ")";
     }
 }
