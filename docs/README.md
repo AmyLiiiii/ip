@@ -1,30 +1,168 @@
-# Duke User Guide
+# Swell User Guide
 
-// Update the title above to match the actual product name
+Swell is a calm task navigator that helps you keep todos, deadlines, events, and tags in one place.
+It responds with a steady sea-navigation personality while keeping commands short and predictable.
 
-// Product screenshot goes here
+When Swell starts, it greets you with:
 
-// Product intro goes here
-
-## Adding deadlines
-
-// Describe the action and its outcome.
-
-// Give examples of usage
-
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
-
-```
-expected output
+```text
+Hi, I'm Swell, your calm task navigator.
+Send me a task, and we'll chart a steady course.
 ```
 
-## Feature ABC
+## Adding Todos
 
-// Feature details
+Use `todo` for tasks without a date or time.
 
+Format:
 
-## Feature XYZ
+```text
+todo DESCRIPTION [#TAG]...
+```
 
-// Feature details
+Example:
+
+```text
+todo read book #school
+```
+
+Expected response:
+
+```text
+Logged and anchored. I've added this task:
+ - [T][ ] read book #school
+There is now 1 task on board.
+```
+
+## Adding Deadlines
+
+Use `deadline` for tasks that must be done by a specific date.
+
+Format:
+
+```text
+deadline DESCRIPTION [#TAG]... /by YYYY-MM-DD
+```
+
+Example:
+
+```text
+deadline submit report #cs2103 /by 2026-09-18
+```
+
+## Adding Events
+
+Use `event` for tasks that happen over a time period.
+
+Format:
+
+```text
+event DESCRIPTION [#TAG]... /from START /to END
+```
+
+Example:
+
+```text
+event project meeting #team /from Monday 2pm /to 4pm
+```
+
+## Viewing Tasks
+
+Use `list` to see every task currently on board.
+
+Format:
+
+```text
+list
+```
+
+Swell introduces the list with:
+
+```text
+Here's the current chart:
+```
+
+## Marking Tasks
+
+Use `mark` when a task is done, and `unmark` when it should be set back to not done.
+
+Formats:
+
+```text
+mark TASK_NUMBER
+unmark TASK_NUMBER
+```
+
+Examples:
+
+```text
+mark 1
+unmark 1
+```
+
+## Deleting Tasks
+
+Use `delete` to remove a task.
+
+Format:
+
+```text
+delete TASK_NUMBER
+```
+
+Example:
+
+```text
+delete 1
+```
+
+## Finding Tasks
+
+Use `find` to search by keyword, or `findtag` to search by tag.
+
+Formats:
+
+```text
+find KEYWORD
+findtag TAG
+```
+
+Examples:
+
+```text
+find report
+findtag cs2103
+```
+
+## Handling Errors
+
+If a command is missing information or uses an unsupported format, Swell explains the issue and gives
+you a working example.
+
+Example:
+
+```text
+todo
+```
+
+Expected response:
+
+```text
+Oops! Choppy water ahead: A todo needs cargo to carry. Try: todo read book
+```
+
+## Exiting Swell
+
+Use `bye` when you are done.
+
+Format:
+
+```text
+bye
+```
+
+Swell replies:
+
+```text
+Docking for now. Come back when you're ready to set sail again.
+```

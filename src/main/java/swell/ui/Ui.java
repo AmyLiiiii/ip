@@ -30,8 +30,8 @@ public class Ui {
      * @return greeting message.
      */
     public String getGreeting() {
-        return joinLines("Hey there! I'm Swell.",
-                "Tell me what's on your mind.");
+        return joinLines("Hi, I'm Swell, your calm task navigator.",
+                "Send me a task, and we'll chart a steady course.");
     }
 
     /**
@@ -59,8 +59,8 @@ public class Ui {
      * @return formatted task list text.
      */
     public String getTasksText(TaskList tasks) {
-        return getTaskListText(tasks, "Here's what we've got so far:",
-                "Your list is clear for now. Fresh start!");
+        return getTaskListText(tasks, "Here's the current chart:",
+                "Clear waters for now. Your task list is empty.");
     }
 
     /**
@@ -79,8 +79,8 @@ public class Ui {
      * @return formatted matching task list text.
      */
     public String getMatchingTasksText(TaskList tasks) {
-        return getTaskListText(tasks, "Here are the matching tasks in your list:",
-                "I couldn't find any matching tasks.");
+        return getTaskListText(tasks, "I found these on the current:",
+                "No matching tasks surfaced this time.");
     }
 
     /**
@@ -101,7 +101,7 @@ public class Ui {
      * @return task-added confirmation text.
      */
     public String getTaskAddedText(Task task, int taskCount) {
-        return joinLines("Got it. I've added this task:",
+        return joinLines("Logged and anchored. I've added this task:",
                 getTaskLine(task),
                 getTaskCountText(taskCount));
     }
@@ -122,7 +122,7 @@ public class Ui {
      * @return task-marked confirmation text.
      */
     public String getTaskMarkedText(Task task) {
-        return joinLines("Nice! I've marked this task as done:",
+        return joinLines("Smooth sailing. I've marked this task as done:",
                 getTaskLine(task));
     }
 
@@ -142,7 +142,7 @@ public class Ui {
      * @return task-unmarked confirmation text.
      */
     public String getTaskUnmarkedText(Task task) {
-        return joinLines("No problem. I've marked this task as not done yet:",
+        return joinLines("Back on deck. I've marked this task as not done yet:",
                 getTaskLine(task));
     }
 
@@ -164,7 +164,7 @@ public class Ui {
      * @return task-deleted confirmation text.
      */
     public String getTaskDeletedText(Task task, int taskCount) {
-        return joinLines("Got it. I've removed this task:",
+        return joinLines("Cleared from the chart. I've removed this task:",
                 getTaskLine(task),
                 getTaskCountText(taskCount));
     }
@@ -185,7 +185,7 @@ public class Ui {
      * @return formatted error text.
      */
     public String getErrorText(String message) {
-        return "Oops! " + message;
+        return "Oops! Choppy water ahead: " + message;
     }
 
     /**
@@ -201,7 +201,7 @@ public class Ui {
      * @return goodbye message.
      */
     public String getGoodbye() {
-        return "Bye for now! Keep shining and come back when you're ready.";
+        return "Docking for now. Come back when you're ready to set sail again.";
     }
 
     private String getTaskListText(TaskList tasks, String heading, String emptyMessage) {
@@ -225,8 +225,12 @@ public class Ui {
     }
 
     private String getTaskCountText(int taskCount) {
-        return "You now have " + taskCount + " task"
-                + getPluralSuffix(taskCount) + " in the list.";
+        return "There " + getBeVerb(taskCount) + " now " + taskCount + " task"
+                + getPluralSuffix(taskCount) + " on board.";
+    }
+
+    private String getBeVerb(int taskCount) {
+        return taskCount == 1 ? "is" : "are";
     }
 
     private String joinLines(String... lines) {
