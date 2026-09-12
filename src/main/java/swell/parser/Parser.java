@@ -26,18 +26,18 @@ public class Parser {
     private static final String EVENT_TO_SEPARATOR = "\\s+/to\\s+";
     private static final Pattern TAG_PATTERN = Pattern.compile("(?<!\\S)#([A-Za-z0-9][A-Za-z0-9_-]*)");
     private static final String TODO_FORMAT_ERROR =
-            "A todo needs a description. Try: todo read book";
+            "A todo needs cargo to carry. Try: todo read book";
     private static final String DEADLINE_FORMAT_ERROR =
-            "A deadline needs a description and /by. Try: deadline return book /by 2019-10-15";
+            "A deadline needs a task and a /by date. Try: deadline return book /by 2019-10-15";
     private static final String DEADLINE_DATE_ERROR =
-            "Please use yyyy-mm-dd for deadlines. Try: deadline return book /by 2019-10-15";
+            "That date drifted off course. Use yyyy-mm-dd, like: deadline return book /by 2019-10-15";
     private static final String EVENT_FORMAT_ERROR =
-            "An event needs a description, /from, and /to. "
+            "An event needs a task, /from, and /to so I can plot the route. "
                     + "Try: event project meeting /from Mon 2pm /to 4pm";
     private static final String FIND_FORMAT_ERROR =
-            "A find command needs a keyword. Try: find book";
+            "Give me a keyword to scan the waters. Try: find book";
     private static final String FIND_TAG_FORMAT_ERROR =
-            "A findtag command needs a tag. Try: findtag followup";
+            "Give me a tag to follow. Try: findtag followup";
 
     /**
      * Prevents instantiation of this utility class.
@@ -72,7 +72,7 @@ public class Parser {
             case EVENT_COMMAND:
                 return createEvent(command);
             default:
-                throw new SwellException("I don't know that task type yet. Try todo, deadline, or event.");
+                throw new SwellException("That task type is not on my map yet. Try todo, deadline, or event.");
         }
     }
 
@@ -87,13 +87,13 @@ public class Parser {
     public static int getTaskNumber(String command, String action) throws SwellException {
         String[] commandParts = command.split("\\s+", 2);
         if (commandParts.length < 2) {
-            throw new SwellException("I need a task number for that. Try: " + action + " 1");
+            throw new SwellException("Point me to a task number for that. Try: " + action + " 1");
         }
 
         try {
             return Integer.parseInt(commandParts[1]);
         } catch (NumberFormatException e) {
-            throw new SwellException("I need a task number for that. Try: " + action + " 1");
+            throw new SwellException("Point me to a task number for that. Try: " + action + " 1");
         }
     }
 
