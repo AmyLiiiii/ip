@@ -21,9 +21,17 @@ public class Parser {
     private static final String EVENT_COMMAND = "event";
     private static final String FIND_COMMAND = "find";
     private static final String FIND_TAG_COMMAND = "findtag";
+    private static final String BY_PREFIX = "/by";
+    private static final String FROM_PREFIX = "/from";
+    private static final String TO_PREFIX = "/to";
     private static final String DEADLINE_SEPARATOR = "\\s+/by\\s+";
     private static final String EVENT_FROM_SEPARATOR = "\\s+/from\\s+";
     private static final String EVENT_TO_SEPARATOR = "\\s+/to\\s+";
+    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("[1-9]\\d*");
+    private static final Pattern TAG_KEYWORD_PATTERN = Pattern.compile("#?[A-Za-z0-9][A-Za-z0-9_-]*");
+    private static final Pattern BY_PREFIX_PATTERN = Pattern.compile("(?<!\\S)/by(?!\\S)");
+    private static final Pattern FROM_PREFIX_PATTERN = Pattern.compile("(?<!\\S)/from(?!\\S)");
+    private static final Pattern TO_PREFIX_PATTERN = Pattern.compile("(?<!\\S)/to(?!\\S)");
     private static final Pattern TAG_PATTERN = Pattern.compile("(?<!\\S)#([A-Za-z0-9][A-Za-z0-9_-]*)");
     private static final String TODO_FORMAT_ERROR =
             "A todo needs cargo to carry. Try: todo read book";
@@ -38,6 +46,8 @@ public class Parser {
             "Give me a keyword to scan the waters. Try: find book";
     private static final String FIND_TAG_FORMAT_ERROR =
             "Give me a tag to follow. Try: findtag followup";
+    private static final String TASK_NUMBER_FORMAT_ERROR =
+            "Point me to one positive task number. Try: %s 1";
 
     /**
      * Prevents instantiation of this utility class.
@@ -87,13 +97,17 @@ public class Parser {
     public static int getTaskNumber(String command, String action) throws SwellException {
         String[] commandParts = command.split("\\s+", 2);
         if (commandParts.length < 2) {
-            throw new SwellException("Point me to a task number for that. Try: " + action + " 1");
+            throw new SwellException(getTaskNumberFormatError(action));
         }
 
+        String taskNumberText = commandParts[1].trim();
+        if (!POSITIVE_INTEGER_PATTERN.matcher(taskNumberText).matches()) {
+            throw new SwellException(getTaskNumberFormatError(action));
+        }
         try {
-            return Integer.parseInt(commandParts[1]);
+            return Integer.parseInt(taskNumberText);
         } catch (NumberFormatException e) {
-            throw new SwellException("Point me to a task number for that. Try: " + action + " 1");
+            throw new SwellException(getTaskNumberFormatError(action));
         }
     }
 
@@ -117,6 +131,9 @@ public class Parser {
      */
     public static String getTagKeyword(String command) throws SwellException {
         String tag = getRequiredCommandBody(command, FIND_TAG_COMMAND, FIND_TAG_FORMAT_ERROR);
+        if (!TAG_KEYWORD_PATTERN.matcher(tag).matches()) {
+            throw new SwellException(FIND_TAG_FORMAT_ERROR);
+        }
         String tagWithoutPrefix = tag.startsWith("#") ? tag.substring(1) : tag;
         if (tagWithoutPrefix.isEmpty()) {
             throw new SwellException(FIND_TAG_FORMAT_ERROR);
@@ -132,6 +149,7 @@ public class Parser {
 
     private static Task createDeadline(String command) throws SwellException {
         String body = getCommandBody(command, DEADLINE_COMMAND);
+        requireSinglePrefix(body, BY_PREFIX, BY_PREFIX_PATTERN, DEADLINE_FORMAT_ERROR);
         String[] deadlineParts = body.split(DEADLINE_SEPARATOR, 2);
         if (deadlineParts.length < 2) {
             throw new SwellException(DEADLINE_FORMAT_ERROR);
@@ -150,6 +168,8 @@ public class Parser {
 
     private static Task createEvent(String command) throws SwellException {
         String body = getCommandBody(command, EVENT_COMMAND);
+        requireSinglePrefix(body, FROM_PREFIX, FROM_PREFIX_PATTERN, EVENT_FORMAT_ERROR);
+        requireSinglePrefix(body, TO_PREFIX, TO_PREFIX_PATTERN, EVENT_FORMAT_ERROR);
         String[] eventParts = body.split(EVENT_FROM_SEPARATOR, 2);
         if (eventParts.length < 2) {
             throw new SwellException(EVENT_FORMAT_ERROR);
@@ -164,6 +184,9 @@ public class Parser {
         String from = timeParts[0].trim();
         String to = timeParts[1].trim();
         requireNonEmptyFields(EVENT_FORMAT_ERROR, from, to);
+        if (from.equalsIgnoreCase(to)) {
+            throw new SwellException("An event's /from and /to values should be different.");
+        }
         return new Event(details.description, from, to, details.tags);
     }
 
@@ -189,6 +212,14 @@ public class Parser {
         return command.substring(commandWord.length()).trim();
     }
 
+    private static void requireSinglePrefix(String text, String prefix, Pattern prefixPattern,
+            String errorMessage) throws SwellException {
+        int count = countMatches(prefixPattern, text);
+        if (count != 1) {
+            throw new SwellException(errorMessage + " Use " + prefix + " exactly once.");
+        }
+    }
+
     private static ParsedTaskDetails parseTaskDetails(String text, String errorMessage)
             throws SwellException {
         String description = TAG_PATTERN.matcher(text).replaceAll("").trim().replaceAll("\\s+", " ");
@@ -212,6 +243,19 @@ public class Parser {
 
     private static boolean containsTag(ArrayList<String> tags, String tagToFind) {
         return tags.stream().anyMatch(tag -> tag.equalsIgnoreCase(tagToFind));
+    }
+
+    private static int countMatches(Pattern pattern, String text) {
+        int count = 0;
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            count += 1;
+        }
+        return count;
+    }
+
+    private static String getTaskNumberFormatError(String action) {
+        return String.format(TASK_NUMBER_FORMAT_ERROR, action);
     }
 
     private static class ParsedTaskDetails {
