@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -15,6 +14,7 @@ import swell.exception.SwellException;
 import swell.task.Deadline;
 import swell.task.Event;
 import swell.task.Task;
+import swell.task.TaskDateTime;
 import swell.task.TaskList;
 import swell.task.Todo;
 
@@ -107,12 +107,12 @@ public class Storage {
 
         if (task instanceof Deadline) {
             return formatFields(type, doneStatus, description,
-                    encode(((Deadline) task).getBy().toString()),
+                    encode(((Deadline) task).getBy().toStorageString()),
                     tags);
         } else if (task instanceof Event) {
             return formatFields(type, doneStatus, description,
-                    encode(((Event) task).getFrom()),
-                    encode(((Event) task).getTo()),
+                    encode(((Event) task).getFrom().toStorageString()),
+                    encode(((Event) task).getTo().toStorageString()),
                     tags);
         }
 
@@ -155,14 +155,15 @@ public class Storage {
                 }
                 assert fields.length == 4 || fields.length == 5
                         : "Deadline storage rows should have four fields or an added tag field";
-                return new Deadline(description, parseSavedDate(fields[3]), parseTags(fields, 4));
+                return new Deadline(description, parseSavedDateTime(fields[3]), parseTags(fields, 4));
             case "E":
                 if (fields.length != 5 && fields.length != 6) {
                     throw new SwellException("A saved event task has the wrong format.");
                 }
                 assert fields.length == 5 || fields.length == 6
                         : "Event storage rows should have five fields or an added tag field";
-                return new Event(description, decode(fields[3]), decode(fields[4]), parseTags(fields, 5));
+                return new Event(description, parseSavedDateTime(fields[3]),
+                        parseSavedDateTime(fields[4]), parseTags(fields, 5));
             default:
                 throw new SwellException("A saved task has an unknown task type.");
         }
@@ -186,11 +187,11 @@ public class Storage {
         return tags;
     }
 
-    private LocalDate parseSavedDate(String encodedDate) throws SwellException {
+    private TaskDateTime parseSavedDateTime(String encodedDate) throws SwellException {
         try {
-            return LocalDate.parse(decode(encodedDate));
+            return TaskDateTime.parse(decode(encodedDate));
         } catch (DateTimeParseException e) {
-            throw new SwellException("A saved deadline task has an invalid date.");
+            throw new SwellException("A saved task has an invalid date or time.");
         }
     }
 
