@@ -1,6 +1,5 @@
 package swell.parser;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +9,7 @@ import swell.exception.SwellException;
 import swell.task.Deadline;
 import swell.task.Event;
 import swell.task.Task;
+import swell.task.TaskDateTime;
 import swell.task.Todo;
 
 /**
@@ -36,12 +36,16 @@ public class Parser {
     private static final String TODO_FORMAT_ERROR =
             "A todo needs cargo to carry. Try: todo read book";
     private static final String DEADLINE_FORMAT_ERROR =
-            "A deadline needs a task and a /by date. Try: deadline return book /by 2019-10-15";
+            "A deadline needs a task and a /by date. Try: deadline return book /by 2019-10-15 1800";
     private static final String DEADLINE_DATE_ERROR =
-            "That date drifted off course. Use yyyy-mm-dd, like: deadline return book /by 2019-10-15";
+            "That date drifted off course. Use yyyy-mm-dd or yyyy-mm-dd HHmm, "
+                    + "like: deadline return book /by 2019-10-15 1800";
     private static final String EVENT_FORMAT_ERROR =
             "An event needs a task, /from, and /to so I can plot the route. "
-                    + "Try: event project meeting /from Mon 2pm /to 4pm";
+                    + "Try: event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600";
+    private static final String EVENT_DATE_ERROR =
+            "Those event times drifted off course. Use yyyy-mm-dd or yyyy-mm-dd HHmm, "
+                    + "like: event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600";
     private static final String FIND_FORMAT_ERROR =
             "Give me a keyword to scan the waters. Try: find book";
     private static final String FIND_TAG_FORMAT_ERROR =
@@ -160,7 +164,7 @@ public class Parser {
         requireNonEmptyFields(DEADLINE_FORMAT_ERROR, by);
 
         try {
-            return new Deadline(details.description, LocalDate.parse(by), details.tags);
+            return new Deadline(details.description, TaskDateTime.parse(by), details.tags);
         } catch (DateTimeParseException e) {
             throw new SwellException(DEADLINE_DATE_ERROR);
         }
@@ -184,7 +188,12 @@ public class Parser {
         String from = timeParts[0].trim();
         String to = timeParts[1].trim();
         requireNonEmptyFields(EVENT_FORMAT_ERROR, from, to);
-        return new Event(details.description, from, to, details.tags);
+        try {
+            return new Event(details.description, TaskDateTime.parse(from),
+                    TaskDateTime.parse(to), details.tags);
+        } catch (DateTimeParseException e) {
+            throw new SwellException(EVENT_DATE_ERROR);
+        }
     }
 
     private static String getRequiredCommandBody(String command, String commandWord,
