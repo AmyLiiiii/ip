@@ -23,6 +23,16 @@ public class TaskListTest {
     }
 
     @Test
+    public void add_sameTodoTwice_increasesTaskCount() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        tasks.add(new Todo("read book"));
+
+        assertEquals(2, tasks.size());
+    }
+
+    @Test
     public void markTask_validTaskNumber_marksTaskAsDone() throws SwellException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
@@ -34,6 +44,15 @@ public class TaskListTest {
     }
 
     @Test
+    public void markTask_alreadyDoneTask_throwsSwellException() throws SwellException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.markTask(1);
+
+        assertThrows(SwellException.class, () -> tasks.markTask(1));
+    }
+
+    @Test
     public void unmarkTask_doneTask_marksTaskAsNotDone() throws SwellException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
@@ -42,6 +61,14 @@ public class TaskListTest {
         Task unmarkedTask = tasks.unmarkTask(1);
 
         assertEquals("[T][ ] read book", unmarkedTask.toString());
+    }
+
+    @Test
+    public void unmarkTask_notDoneTask_throwsSwellException() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertThrows(SwellException.class, () -> tasks.unmarkTask(1));
     }
 
     @Test
@@ -60,7 +87,7 @@ public class TaskListTest {
     }
 
     @Test
-    public void markTask_taskNumberTooLarge_throwsSwellException() {
+    public void markTask_taskNumberTooLarge_throwsSwellException() throws SwellException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
 
