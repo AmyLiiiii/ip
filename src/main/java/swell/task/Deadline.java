@@ -1,18 +1,13 @@
 package swell.task;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Represents a task that should be completed by a deadline.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
-            DateTimeFormatter.ofPattern("MMM d yyyy", Locale.ENGLISH);
-
-    private final LocalDate by;
+    private final TaskDateTime by;
 
     /**
      * Creates a deadline task with the given description and deadline date.
@@ -21,6 +16,16 @@ public class Deadline extends Task {
      * @param by deadline date.
      */
     public Deadline(String description, LocalDate by) {
+        this(description, TaskDateTime.of(by));
+    }
+
+    /**
+     * Creates a deadline task with the given description and deadline date-time.
+     *
+     * @param description task description.
+     * @param by deadline date-time.
+     */
+    public Deadline(String description, TaskDateTime by) {
         super(TaskType.DEADLINE, description);
         this.by = by;
     }
@@ -33,6 +38,17 @@ public class Deadline extends Task {
      * @param tags task tags.
      */
     public Deadline(String description, LocalDate by, ArrayList<String> tags) {
+        this(description, TaskDateTime.of(by), tags);
+    }
+
+    /**
+     * Creates a deadline task with the given description, deadline date-time, and tags.
+     *
+     * @param description task description.
+     * @param by deadline date-time.
+     * @param tags task tags.
+     */
+    public Deadline(String description, TaskDateTime by, ArrayList<String> tags) {
         super(TaskType.DEADLINE, description, tags);
         this.by = by;
     }
@@ -40,9 +56,9 @@ public class Deadline extends Task {
     /**
      * Returns the deadline date.
      *
-     * @return deadline date.
+     * @return deadline date-time.
      */
-    public LocalDate getBy() {
+    public TaskDateTime getBy() {
         return by;
     }
 
@@ -51,6 +67,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by.format(DISPLAY_DATE_FORMAT) + ")";
+        return super.toString() + " (by: " + by.toDisplayString() + ")";
     }
 }
