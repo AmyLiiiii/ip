@@ -42,6 +42,14 @@ public class ParserTest {
     }
 
     @Test
+    public void getTask_deadlineCommandWithIsoDateTime_returnsFormattedDeadline() throws SwellException {
+        Task task = Parser.getTask("deadline return book /by 2019-10-15 1800");
+
+        assertInstanceOf(Deadline.class, task);
+        assertEquals("[D][ ] return book (by: Oct 15 2019 6:00 PM)", task.toString());
+    }
+
+    @Test
     public void getTask_deadlineCommandWithTag_returnsTaggedDeadlineTask() throws SwellException {
         Task task = Parser.getTask("deadline submit resume #Acme /by 2019-10-15");
 
@@ -52,10 +60,19 @@ public class ParserTest {
 
     @Test
     public void getTask_eventCommand_returnsEventTask() throws SwellException {
-        Task task = Parser.getTask("event meeting /from Mon /to Tue");
+        Task task = Parser.getTask("event meeting /from 2019-10-15 1400 /to 2019-10-15 1600");
 
         assertInstanceOf(Event.class, task);
-        assertEquals("[E][ ] meeting (from: Mon to: Tue)", task.toString());
+        assertEquals("[E][ ] meeting (from: Oct 15 2019 2:00 PM to: Oct 15 2019 4:00 PM)",
+                task.toString());
+    }
+
+    @Test
+    public void getTask_eventCommandWithIsoDates_returnsFormattedEvent() throws SwellException {
+        Task task = Parser.getTask("event meeting /from 2019-10-15 /to 2019-10-16");
+
+        assertInstanceOf(Event.class, task);
+        assertEquals("[E][ ] meeting (from: Oct 15 2019 to: Oct 16 2019)", task.toString());
     }
 
     @Test
@@ -92,10 +109,17 @@ public class ParserTest {
 
     @Test
     public void getTask_eventCommandWithSameFromAndTo_returnsEventTask() throws SwellException {
-        Task task = Parser.getTask("event meeting /from Mon /to Mon");
+        Task task = Parser.getTask("event meeting /from 2019-10-15 1400 /to 2019-10-15 1400");
 
         assertInstanceOf(Event.class, task);
-        assertEquals("[E][ ] meeting (from: Mon to: Mon)", task.toString());
+        assertEquals("[E][ ] meeting (from: Oct 15 2019 2:00 PM to: Oct 15 2019 2:00 PM)",
+                task.toString());
+    }
+
+    @Test
+    public void getTask_eventCommandWithInvalidDateTime_throwsSwellException() {
+        assertThrows(SwellException.class, () ->
+                Parser.getTask("event meeting /from Monday 2pm /to 2019-10-15 1600"));
     }
 
     @Test
