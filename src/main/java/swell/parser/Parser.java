@@ -184,9 +184,6 @@ public class Parser {
         String from = timeParts[0].trim();
         String to = timeParts[1].trim();
         requireNonEmptyFields(EVENT_FORMAT_ERROR, from, to);
-        if (from.equalsIgnoreCase(to)) {
-            throw new SwellException("An event's /from and /to values should be different.");
-        }
         return new Event(details.description, from, to, details.tags);
     }
 
