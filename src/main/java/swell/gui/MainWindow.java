@@ -15,6 +15,7 @@ import swell.Swell;
 public class MainWindow extends AnchorPane {
     private static final String USER_AVATAR_PATH = "/images/Moon.png";
     private static final String SWELL_AVATAR_PATH = "/images/Star.png";
+    private static final String ERROR_RESPONSE_PREFIX = "Oops!";
 
     private final Image userImage = new Image(getClass().getResourceAsStream(USER_AVATAR_PATH));
     private final Image swellImage = new Image(getClass().getResourceAsStream(SWELL_AVATAR_PATH));
@@ -65,7 +66,7 @@ public class MainWindow extends AnchorPane {
         String response = swell.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getSwellDialog(response, swellImage));
+                getSwellDialog(response));
         userInput.clear();
 
         if (swell.isExit()) {
@@ -76,5 +77,12 @@ public class MainWindow extends AnchorPane {
     private void disableInputControls() {
         userInput.setDisable(true);
         sendButton.setDisable(true);
+    }
+
+    private DialogBox getSwellDialog(String response) {
+        if (response.startsWith(ERROR_RESPONSE_PREFIX)) {
+            return DialogBox.getSwellErrorDialog(response, swellImage);
+        }
+        return DialogBox.getSwellDialog(response, swellImage);
     }
 }
