@@ -56,12 +56,13 @@ deadline submit report /by 2026-09-18 /by 2026-09-19
 ```
 
 For event commands, use `/from` exactly once and `/to` exactly once. The `/from` and `/to`
-values should not be the same.
+values may be the same if the event happens at one point in time.
 
 Correct:
 
 ```text
 event project meeting /from Monday 2pm /to 4pm
+event quick sync /from Monday /to Monday
 ```
 
 Incorrect:
@@ -69,7 +70,6 @@ Incorrect:
 ```text
 event project meeting /from Monday 2pm
 event project meeting /from Monday 2pm /from Tuesday 2pm /to 4pm
-event project meeting /from Monday /to Monday
 ```
 
 For tags, use letters, numbers, hyphens, or underscores only. Tags can be written with or
@@ -225,7 +225,7 @@ Some examples of commands Swell will reject:
 ```text
 todo
 deadline submit report /by Sunday
-event project meeting /from Monday /to Monday
+event project meeting /from Monday
 findtag follow up
 delete one
 ```
