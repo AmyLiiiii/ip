@@ -1,466 +1,186 @@
 # Swell User Guide
 
-Swell is a desktop task chatbot that helps you track todos, deadlines, events, and tags with short text commands.
-It speaks like a calm task navigator, but keeps the workflow simple and predictable.
+Swell is a desktop task chatbot for keeping track of todos, deadlines, events, and tags. It is designed for users who prefer entering short commands while retaining the convenience of a graphical chat interface.
 
 ![Swell GUI](Ui.png)
 
-When Swell starts, it greets you with:
-
-```text
-Hi, I'm Swell, your calm task navigator.
-Send me a task, and we'll chart a steady course.
-```
-
 ## Quick Start
 
-Type a command into the input box and press `Enter` or click `Send`.
-Swell saves your tasks automatically, so your task list will still be there the next time you open the app.
+1. Ensure that Java `25` or later is installed on your computer.
+1. Download the latest `swell.jar`. If you have the project source instead, create it by running:
 
-A simple first session can look like this:
+    ```sh
+    ./gradlew shadowJar
+    ```
 
-```text
-todo read book
-deadline submit report /by 2026-09-18 2359
-event project meeting /from 2026-09-19 1400 /to 2026-09-19 1600
-list
-```
+    The file is created at `build/libs/swell.jar`.
 
-## Command Format
+1. Copy `swell.jar` to the folder you want to use as Swell's home folder. Swell stores its data in this folder.
+1. Open a terminal in that folder and run:
 
-Swell reads commands in this general format:
+    ```sh
+    java -jar swell.jar
+    ```
 
-```text
-COMMAND DETAILS
-```
+Swell displays a greeting when it is ready. Type a command in the input box and press <kbd>Enter</kbd>, or select **Send**. Refer to [Features](#features) for the complete command reference.
 
-Use one command word at the start, followed by the details needed for that command.
-Extra spaces at the start or end are accepted.
+## Features
 
-Correct:
+### Command format
 
-```text
-todo read book
-mark 1
-delete 2
-```
+- Commands and their prefixes must be typed in lowercase. For example, use `todo`, not `TODO`, and `/by`, not `/BY`.
+- Words in `UPPER_CASE` are values you supply. For example, in `todo DESCRIPTION`, replace `DESCRIPTION` with a task such as `read book`.
+- Items in square brackets are optional. For example, `todo DESCRIPTION [#TAG]...` can be used as either `todo read book` or `todo read book #school`.
+- `...` means the preceding item can appear zero or more times. For example, a task can have no tags, one tag, or several tags.
+- Task numbers are positive integers (`1`, `2`, `3`, ...). They refer to the number displayed by `list`.
+- Swell accepts dates as `YYYY-MM-DD`, or dates and times as `YYYY-MM-DD HHmm`. Use four digits for the time and do not include a colon.
+- Leading and trailing spaces are ignored. The order of the required parts of `deadline` and `event` commands is fixed.
 
-Incorrect:
+### Adding a todo: `todo`
 
-```text
-read book
-mark
-delete two
-```
+Adds a task without a date or time.
 
-The first example is missing a supported command word.
-The second example is missing a task number.
-The third example uses a word instead of a positive whole number.
-
-## Dates and Times
-
-Deadlines and events accept dates in either of these formats:
-
-```text
-YYYY-MM-DD
-YYYY-MM-DD HHmm
-```
-
-Correct:
-
-```text
-2026-09-18
-2026-09-18 2359
-```
-
-Incorrect:
-
-```text
-18-09-2026
-2026/09/18
-2026-09-18 23:59
-Sunday
-2026-02-30
-```
-
-Use a real calendar date. For a time, use four digits without a colon.
-
-## Tags
-
-Tags help you group related tasks.
-When adding a tag to a task, start the tag with `#`.
-Tags can contain letters, numbers, hyphens, or underscores.
-
-Correct:
-
-```text
-todo email Alice #followup
-deadline submit report #cs2103 /by 2026-09-18
-event project meeting #team_sync /from 2026-09-19 1400 /to 2026-09-19 1600
-```
-
-Incorrect:
-
-```text
-todo email Alice #follow up
-todo email Alice #
-deadline submit report /by 2026-09-18 #cs2103
-```
-
-Use one word per tag.
-For deadlines, place tags before `/by`.
-For events, place tags before `/from`.
-
-## Add a Todo
-
-Use `todo` for a task without a date or time.
-
-Format:
-
-```text
-todo DESCRIPTION [#TAG]...
-```
+Format: `todo DESCRIPTION [#TAG]...`
 
 Examples:
 
-```text
-todo read book
-todo email Alice #followup
-```
+- `todo read book`
+- `todo email Alice #followup`
+- `todo revise notes #cs2103 #urgent`
 
-Swell replies with the added task and the updated task count.
+Each tag begins with `#` and may contain letters, numbers, hyphens, or underscores. Duplicate tags, including tags that differ only in letter case, are stored once.
 
-Common mistakes:
+### Adding a deadline: `deadline`
 
-```text
-todo
-```
+Adds a task that must be completed by a date or date-time.
 
-This is missing the task description. Use something like:
-
-```text
-todo read book
-```
-
-## Add a Deadline
-
-Use `deadline` for a task that must be completed by a specific date or date-time.
-
-Format:
-
-```text
-deadline DESCRIPTION [#TAG]... /by DATE
-```
+Format: `deadline DESCRIPTION [#TAG]... /by DATE [HHmm]`
 
 Examples:
 
-```text
-deadline submit report /by 2026-09-18
-deadline submit report #cs2103 /by 2026-09-18 2359
-```
+- `deadline submit report /by 2026-09-18`
+- `deadline submit report #cs2103 /by 2026-09-18 2359`
 
-Use `/by` exactly once.
+- Use `/by` exactly once.
+- Put tags before `/by`.
+- `DATE` must be a real calendar date. For example, `2026-02-30` is not valid.
 
-Common mistakes:
+### Adding an event: `event`
 
-```text
-deadline submit report
-deadline submit report /by
-deadline /by 2026-09-18
-deadline submit report /by Sunday
-deadline submit report /by 2026-09-18 /by 2026-09-19
-```
+Adds a task that takes place from a start date or date-time to an end date or date-time.
 
-These commands are missing `/by`, missing the date, missing the description, using an unsupported date format, or using `/by` more than once.
-
-## Add an Event
-
-Use `event` for a task that happens during a period of time.
-
-Format:
-
-```text
-event DESCRIPTION [#TAG]... /from START /to END
-```
+Format: `event DESCRIPTION [#TAG]... /from START [HHmm] /to END [HHmm]`
 
 Examples:
 
-```text
-event project meeting /from 2026-09-19 1400 /to 2026-09-19 1600
-event quick sync #team /from 2026-09-19 /to 2026-09-19
-```
+- `event project meeting /from 2026-09-19 1400 /to 2026-09-19 1600`
+- `event quick sync #team /from 2026-09-19 /to 2026-09-19`
 
-Use `/from` exactly once and `/to` exactly once.
-The start and end may be the same if the event happens at one point in time.
+- Use `/from` exactly once and `/to` exactly once.
+- Put tags before `/from`.
+- Start and end values can be dates only, dates and times, or a combination of both.
 
-Common mistakes:
+### Listing all tasks: `list`
 
-```text
-event project meeting /from 2026-09-19 1400
-event project meeting /to 2026-09-19 1600
-event /from 2026-09-19 1400 /to 2026-09-19 1600
-event project meeting /from Monday 2pm /to Tuesday 3pm
-event project meeting /from 2026-09-19 1400 /from 2026-09-20 1400 /to 2026-09-20 1600
-```
+Displays every saved task and its task number.
 
-These commands are missing `/to`, missing `/from`, missing the description, using unsupported date-time formats, or using `/from` more than once.
+Format: `list`
 
-## List Tasks
-
-Use `list` to view all saved tasks.
-
-Format:
-
-```text
-list
-```
-
-Example response:
+Example output:
 
 ```text
 Here's the current chart:
 1. [T][ ] read book #school
 2. [D][ ] submit report #cs2103 (by: Sep 18 2026 11:59 PM)
+3. [E][X] project meeting #team (from: Sep 19 2026 2:00 PM to: Sep 19 2026 4:00 PM)
 ```
 
-If there are no tasks, Swell will tell you the task list is empty.
+`[T]`, `[D]`, and `[E]` identify todo, deadline, and event tasks respectively. `[ ]` means the task is not done; `[X]` means it is done. If there are no tasks, Swell reports that the list is empty.
 
-## Mark and Unmark Tasks
+### Finding tasks by description: `find`
 
-Use `mark` when a task is done.
-Use `unmark` when a completed task should be set back to not done.
+Displays tasks whose descriptions contain the given text.
 
-Formats:
-
-```text
-mark TASK_NUMBER
-unmark TASK_NUMBER
-```
+Format: `find KEYWORD`
 
 Examples:
 
-```text
-mark 1
-unmark 1
-```
+- `find report`
+- `find project meeting`
 
-Common mistakes:
+The search is case-insensitive and searches descriptions only. It matches text within a description, so `find meet` matches a task named `project meeting`.
 
-```text
-mark
-mark 0
-mark one
-mark 1 2
-unmark 999
-```
+### Finding tasks by tag: `findtag`
 
-Use one positive whole number only.
-The number must refer to a task currently shown in your task list.
-Swell will also warn you if you try to mark a completed task again or unmark a task that is already not done.
+Displays tasks with the specified tag.
 
-## Delete a Task
-
-Use `delete` to remove a task from the list.
-
-Format:
-
-```text
-delete TASK_NUMBER
-```
-
-Example:
-
-```text
-delete 2
-```
-
-Swell will show the removed task and the updated task count.
-
-Common mistakes:
-
-```text
-delete
-delete 0
-delete one
-delete 1 2
-delete 999
-```
-
-Use one positive whole number only.
-The number must refer to an existing task.
-
-## Find Tasks by Keyword
-
-Use `find` to search task descriptions.
-
-Format:
-
-```text
-find KEYWORD
-```
+Format: `findtag TAG`
 
 Examples:
 
-```text
-find report
-find project meeting
-```
+- `findtag cs2103`
+- `findtag #school`
+- `findtag team_sync`
 
-The search is case-insensitive.
+You may include or omit the leading `#` when searching. Tag matching is case-insensitive.
 
-Common mistakes:
+### Marking a task as done: `mark`
 
-```text
-find
-```
+Marks the specified task as complete.
 
-This is missing the keyword to search for.
+Format: `mark TASK_NUMBER`
 
-## Find Tasks by Tag
+Example: `mark 1`
 
-Use `findtag` to search tasks by tag.
+The task number must refer to an existing task in the full list. Swell reports an error if the task is already marked as done.
 
-Format:
+### Marking a task as not done: `unmark`
 
-```text
-findtag TAG
-```
+Marks a completed task as not done.
 
-Examples:
+Format: `unmark TASK_NUMBER`
 
-```text
-findtag cs2103
-findtag #school
-```
+Example: `unmark 1`
 
-You may include or omit `#` when searching for a tag.
+The task number must refer to an existing task in the full list. Swell reports an error if the task is already not done.
 
-Common mistakes:
+### Deleting a task: `delete`
 
-```text
-findtag
-findtag follow up
-findtag #
-findtag @school
-```
+Removes the specified task permanently.
 
-Use one tag only.
-The tag must contain letters, numbers, hyphens, or underscores.
+Format: `delete TASK_NUMBER`
 
-## Exit Swell
+Example: `delete 2`
 
-Use `bye` when you are done.
+The task number must refer to an existing task in the full list. Swell confirms the removed task and the number of tasks remaining.
 
-Format:
+### Exiting Swell: `bye`
 
-```text
-bye
-```
+Ends the current Swell session and disables further input in the application window.
 
-Swell replies:
+Format: `bye`
 
-```text
-Docking for now. Come back when you're ready to set sail again.
-```
+### Saving data
 
-## Error Messages
+Swell saves the task list automatically whenever you add, mark, unmark, or delete a task. You do not need to save manually. Your tasks are loaded automatically when Swell next starts from the same home folder.
 
-If a command is missing information or uses an unsupported format, Swell explains the problem and gives a working example.
-In the GUI, errors are shown with a different style so they are easier to notice.
+### Editing the data file
 
-Example:
+Swell stores task data in `data/swell.txt` inside its home folder.
 
-```text
-todo
-```
-
-Swell replies:
-
-```text
-Oops! Choppy water ahead: A todo needs cargo to carry. Try: todo read book
-```
-
-Here are the main error types Swell handles:
-
-Unsupported command:
-
-```text
-add read book
-```
-
-Use one of the supported commands instead: `todo`, `deadline`, `event`, `list`, `find`, `findtag`, `mark`, `unmark`, `delete`, or `bye`.
-
-Missing description:
-
-```text
-todo
-deadline /by 2026-09-18
-event /from 2026-09-19 /to 2026-09-20
-```
-
-Add a task description after the command word.
-
-Missing required prefix:
-
-```text
-deadline submit report
-event project meeting /from 2026-09-19
-event project meeting /to 2026-09-19
-```
-
-Use `/by` for deadlines. Use both `/from` and `/to` for events.
-
-Repeated required prefix:
-
-```text
-deadline submit report /by 2026-09-18 /by 2026-09-19
-event meeting /from 2026-09-19 /from 2026-09-20 /to 2026-09-20
-```
-
-Use each required prefix exactly once.
-
-Invalid date or time:
-
-```text
-deadline submit report /by 2026-02-30
-deadline submit report /by 2026-09-18 23:59
-event meeting /from Monday 2pm /to Tuesday 3pm
-```
-
-Use `YYYY-MM-DD` or `YYYY-MM-DD HHmm`.
-
-Invalid task number:
-
-```text
-mark 0
-mark one
-delete 1 2
-```
-
-Use one positive whole number that exists in your task list.
-
-Invalid tag:
-
-```text
-findtag
-findtag follow up
-findtag #
-findtag @school
-```
-
-Use a single tag such as `school`, `#school`, `cs2103`, or `follow_up`.
+> **Caution:** Edit this file only if you understand its format. If any saved task is invalid, Swell shows an error and starts with an empty task list for that session. The original file remains until a later task-changing command overwrites it, so back up the file before making manual changes.
 
 ## Command Summary
 
-```text
-todo DESCRIPTION [#TAG]...
-deadline DESCRIPTION [#TAG]... /by YYYY-MM-DD [HHmm]
-event DESCRIPTION [#TAG]... /from YYYY-MM-DD [HHmm] /to YYYY-MM-DD [HHmm]
-list
-mark TASK_NUMBER
-unmark TASK_NUMBER
-delete TASK_NUMBER
-find KEYWORD
-findtag TAG
-bye
-```
+| Action              | Format                                                          | Example                                                                 |
+| ------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Add todo            | `todo DESCRIPTION [#TAG]...`                                    | `todo read book #school`                                                |
+| Add deadline        | `deadline DESCRIPTION [#TAG]... /by DATE [HHmm]`                | `deadline submit report #cs2103 /by 2026-09-18 2359`                    |
+| Add event           | `event DESCRIPTION [#TAG]... /from START [HHmm] /to END [HHmm]` | `event project meeting #team /from 2026-09-19 1400 /to 2026-09-19 1600` |
+| List all tasks      | `list`                                                          | `list`                                                                  |
+| Find by description | `find KEYWORD`                                                  | `find report`                                                           |
+| Find by tag         | `findtag TAG`                                                   | `findtag #school`                                                       |
+| Mark task done      | `mark TASK_NUMBER`                                              | `mark 1`                                                                |
+| Mark task not done  | `unmark TASK_NUMBER`                                            | `unmark 1`                                                              |
+| Delete task         | `delete TASK_NUMBER`                                            | `delete 2`                                                              |
+| Exit Swell          | `bye`                                                           | `bye`                                                                   |
