@@ -170,6 +170,93 @@ Swell stores task data in `data/swell.txt` inside its home folder.
 
 > **Caution:** Edit this file only if you understand its format. If any saved task is invalid, Swell shows an error and starts with an empty task list for that session. The original file remains until a later task-changing command overwrites it, so back up the file before making manual changes.
 
+## Error Messages
+
+If a command is missing information or uses an unsupported format, Swell explains the problem and gives a working example.
+In the GUI, errors are shown with a different style so they are easier to notice.
+
+Example:
+
+```text
+todo
+```
+
+Swell replies:
+
+```text
+Oops! Choppy water ahead: A todo needs cargo to carry. Try: todo read book
+```
+
+Here are the main error types Swell handles:
+
+Unsupported command:
+
+```text
+add read book
+```
+
+Use one of the supported commands instead: `todo`, `deadline`, `event`, `list`, `find`, `findtag`, `mark`, `unmark`, `delete`, or `bye`.
+
+Missing description:
+
+```text
+todo
+deadline /by 2026-09-18
+event /from 2026-09-19 /to 2026-09-20
+```
+
+Add a task description after the command word.
+
+Missing required prefix:
+
+```text
+deadline submit report
+event project meeting /from 2026-09-19
+event project meeting /to 2026-09-19
+```
+
+Use `/by` for deadlines. Use both `/from` and `/to` for events.
+
+Repeated required prefix:
+
+```text
+deadline submit report /by 2026-09-18 /by 2026-09-19
+event meeting /from 2026-09-19 /from 2026-09-20 /to 2026-09-20
+```
+
+Use each required prefix exactly once.
+
+Invalid date or time:
+
+```text
+deadline submit report /by 2026-02-30
+deadline submit report /by 2026-09-18 23:59
+event meeting /from Monday 2pm /to Tuesday 3pm
+```
+
+Use `YYYY-MM-DD` or `YYYY-MM-DD HHmm`.
+
+Invalid task number:
+
+```text
+mark 0
+mark one
+delete 1 2
+```
+
+Use one positive whole number that exists in your task list.
+
+Invalid tag:
+
+```text
+findtag
+findtag follow up
+findtag #
+findtag @school
+```
+
+Use a single tag such as `school`, `#school`, `cs2103`, or `follow_up`.
+
 ## Command Summary
 
 | Action              | Format                                                          | Example                                                                 |
